@@ -80,6 +80,7 @@ chain_init () {
   # iptables -A $1 -j RETURN
 
   iptables -t nat -N $1
+  iptables -t nat -A PREROUTING -m addrtype --dst-type LOCAL -j $1
   iptables -t nat -A OUTPUT -m addrtype --dst-type LOCAL -j $1
   # iptables -t nat -A $1 -j RETURN
 }
