@@ -1,0 +1,21 @@
+# //////////////////////////////////////////////////////////////////////////// #
+# //  EXT  /////////////////////////////////////////////////////////////////// #
+# //////////////////////////////////////////////////////////////////////////// #
+
+comment "Docker Services"
+
+# menuconfig  ENABLE_DOCKER_SERVICES
+# 	 bool "Docker Services"
+# 	 default n
+# 	 ---help---
+# 	  Enable optional docker services
+#
+# if ENABLE_DOCKER_SERVICES
+
+  # //  GITLAB  //
+  source services/gitlab/gitlab.kconfig
+
+  # //  SHARELATEX  //
+  source services/sharelatex/sharelatex.kconfig
+
+# endif # ENABLE_DOCKER_SERVICES

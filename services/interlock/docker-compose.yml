@@ -1,0 +1,74 @@
+version: '3.2'
+services:
+
+  interlock:
+    image: ehazlett/interlock:rigoni
+    command: -D run -c /etc/interlock/config.toml
+    tty: true
+    #ports:
+        #- 8080
+    volumes:
+        - /etc/docker:/etc/docker:ro
+        - ${abs_srcdir}/config.toml:/etc/interlock/config.toml
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ${abs_srcdir}:/templates
+        - nginx:/etc/nginx
+
+
+  nginx:
+      image: nginx:latest
+      entrypoint: nginx
+      command: -g "daemon off;" -c /etc/nginx/nginx.conf
+      ports:
+          - 80:80
+      labels:
+          - "interlock.ext.name=nginx"
+      #links:
+         #- interlock:interlock
+      volumes:
+        - nginx:/etc/nginx
+
+
+  web1:
+    image: ehazlett/docker-demo:latest
+    deploy:
+      replicas: 2
+    ports:
+      - 80
+      - 8080
+    labels:
+        - "interlock.hostname=test"
+        - "interlock.domain=local"
+        - "reroute.ip=127.0.0.2"
+        - "reroute.ports=80:8080"
+    volumes:
+      - prova:/tmp/prova
+      - btsync_data:/data
+    networks:
+      - interlock
+
+
+  web2:
+    image: yeasy/simple-web:latest
+    deploy:
+      replicas: 2
+    ports:
+      - 80
+    labels:
+      - "reroute.ip=127.0.0.3"
+      - "reroute.ports=80:80"
+    volumes:
+      - prova:/tmp/prova
+      - btsync_data:/data
+    networks:
+      - interlock
+
+
+volumes:
+  prova:
+  config:
+  btsync_data:
+
+networks:
+  interlock:
+

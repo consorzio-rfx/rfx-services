@@ -1,0 +1,68 @@
+## ////////////////////////////////////////////////////////////////////////// //
+##
+## This file is part of the autoconf-bootstrap project.
+## Copyright 2018 Andrea Rigoni Garola <andrea.rigoni@igi.cnr.it>.
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
+## ////////////////////////////////////////////////////////////////////////// //
+
+
+
+# //////////////////////////////////////////////////////////////////////////// #
+# //       SERVICE_SHARELATEX  /////////////////////////////////////////////// #
+# //////////////////////////////////////////////////////////////////////////// #
+
+AX_KCONFIG_VAR_ENABLE([SERVICE_SHARELATEX],["Enable SERVICE_SHARELATEX"])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_DOCKER_IMAGE],["set with SHARELATEX_DOCKER_IMAGE"])
+AC_SUBST([SHARELATEX_DOCKER_IMAGE])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_COMPOSER_FILE],["set with SHARELATEX_COMPOSER_FILE"])
+AC_SUBST([SHARELATEX_COMPOSER_FILE])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_PUBLIC_IP],["set with SHARELATEX_PUBLIC_IP"])
+AC_SUBST([SHARELATEX_PUBLIC_IP])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_PUBLIC_PORTS],["set with SHARELATEX_PUBLIC_PORTS"])
+AC_SUBST([SHARELATEX_PUBLIC_PORTS])
+
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_EMAIL_SMTP_HOST],["set with SHARELATEX_EMAIL_SMTP_HOST"])
+AC_SUBST([SHARELATEX_EMAIL_SMTP_HOST])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_EMAIL_SMTP_PORT],["set with SHARELATEX_EMAIL_SMTP_PORT"])
+AC_SUBST([SHARELATEX_EMAIL_SMTP_PORT])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_EMAIL_SMTP_SECURE],["set with SHARELATEX_EMAIL_SMTP_SECURE"])
+AC_SUBST([SHARELATEX_EMAIL_SMTP_SECURE])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_EMAIL_SMTP_USER],["set with SHARELATEX_EMAIL_SMTP_USER"])
+AC_SUBST([SHARELATEX_EMAIL_SMTP_USER])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_EMAIL_SMTP_PASS],["set with SHARELATEX_EMAIL_SMTP_PASS"])
+AC_SUBST([SHARELATEX_EMAIL_SMTP_PASS])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_EMAIL_SMTP_IGNORE_TLS],["set with SHARELATEX_EMAIL_SMTP_IGNORE_TLS"])
+AC_SUBST([SHARELATEX_EMAIL_SMTP_IGNORE_TLS])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH],["set with SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH"])
+AC_SUBST([SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_EMAIL_SMTP_IGNORE_TLS],["set with SHARELATEX_EMAIL_SMTP_IGNORE_TLS"])
+AC_SUBST([SHARELATEX_EMAIL_SMTP_IGNORE_TLS])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_CUSTOM_EMAIL_FOOTER],["set with SHARELATEX_CUSTOM_EMAIL_FOOTER"])
+AC_SUBST([SHARELATEX_CUSTOM_EMAIL_FOOTER])
+

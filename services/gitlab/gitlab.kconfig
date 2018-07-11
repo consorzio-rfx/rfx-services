@@ -1,0 +1,82 @@
+## ////////////////////////////////////////////////////////////////////////// //
+##
+## This file is part of the autoconf-bootstrap project.
+## Copyright 2018 Andrea Rigoni Garola <andrea.rigoni@igi.cnr.it>.
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
+## ////////////////////////////////////////////////////////////////////////// //
+
+
+
+# //////////////////////////////////////////////////////////////////////////// #
+# //  SERVICE_GITLAB  //////////////////////////////////////////////////////// #
+# //////////////////////////////////////////////////////////////////////////// #
+
+menuconfig SERVICE_GITLAB
+	 bool "Enable GITLAB service"
+	 default n
+	 ---help---
+	  Enable GiLab-ce service through Docker image
+
+if SERVICE_GITLAB
+
+  config GITLAB_DOCKER_IMAGE
+	 string  "Docker image"
+	 default "gitlab/gitlab-ce:latest"
+	 ---help---
+        GiLab docker image to use, please note that this image will be lauched as
+        a docker swarm service even if the composer that is provided here is meant
+        to be a single instance. For this reason a constanint has been added and
+        the service will run inside the swam manager.
+
+  config GITLAB_COMPOSER_FILE
+	 string  "Docker composer file"
+	 default "${srcdir}/services/gitlab/docker-composer.yml"
+	 ---help---
+	    GiLab docker composer file to use
+
+  config GITLAB_EXTERNAL_URL
+    string "external url"
+    default "https://localhost"
+    --- help ---
+        In order for GitLab to display correct repository clone links to your users
+        it needs to know the URL under which it is reached by your users,
+        e.g. http://gitlab.example.com
+
+        see: https://docs.gitlab.com/omnibus/settings/configuration.html
+
+  config GITLAB_PUBLIC_IP
+    string "public ip"
+    default ""
+    --- help ---
+      Chose a fixed public ip for Gitlab service that will be mapped using a set
+      of iptables rulse that overloads the docker swarm ingress network. A chain
+      named as the service name will be created in the manager node, see it with
+      the command: sudo iptables -S and sudo iptables -t nat -S
+
+      NOTE: use empty field if you don't want to apply any reroute rule
+
+  config GITLAB_PUBLIC_PORTS
+    string "port map"
+    default "80:80 443:443 22:22"
+    --- help ---
+      Chose a set of ports to map between the ingress docker network and the ip
+      for public access. the left side is the published port while the right is
+      the exposed service port within the ingress network visible in the docker
+      docker-compose.yml file
+
+
+endif # SERVICE_GITLAB
+

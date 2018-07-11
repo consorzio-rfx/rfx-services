@@ -1,0 +1,112 @@
+## ////////////////////////////////////////////////////////////////////////// //
+##
+## This file is part of the autoconf-bootstrap project.
+## Copyright 2018 Andrea Rigoni Garola <andrea.rigoni@igi.cnr.it>.
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
+## ////////////////////////////////////////////////////////////////////////// //
+
+
+
+# //////////////////////////////////////////////////////////////////////////// #
+# //  SERVICE_SHARELATEX  //////////////////////////////////////////////////// #
+# //////////////////////////////////////////////////////////////////////////// #
+
+menuconfig SERVICE_SHARELATEX
+	 bool "SHARELATEX service"
+	 default n
+	 ---help---
+	  Enable Sharelatex service through Docker image
+
+if  SERVICE_SHARELATEX
+
+  config SHARELATEX_DOCKER_IMAGE
+	 string  "Docker image"
+	 default "sharelatex/sharelatex:latest"
+	 ---help---
+	  Sharelatex docker image to use
+
+  config SHARELATEX_COMPOSER_FILE
+	 string  "Docker composer file"
+	 default "${srcdir}/services/sharelatex/docker-composer.yml"
+	 ---help---
+	  Sharelatex docker composer file to use
+
+  config SHARELATEX_PUBLIC_IP
+    string "public ip"
+    default ""
+    --- help ---
+      Chose a fixed public ip for SHARELATEX service that will be mapped using a set
+      of iptables rulse that overloads the docker swarm ingress network. A chain
+      named as the service name will be created in the manager node, see it with
+      the command: sudo iptables -S and sudo iptables -t nat -S
+
+      NOTE: use empty field if you don't want to apply any reroute rule
+
+  config SHARELATEX_PUBLIC_PORTS
+    string "port map"
+    default "80:80"
+    --- help ---
+      Chose a set of ports to map between the ingress docker network and the ip
+      for public access. the left side is the published port while the right is
+      the exposed service port within the ingress network visible in the docker
+      docker-compose.yml file
+
+comment "SHARELATEX MAIL OPTIONS"
+
+   config SHARELATEX_EMAIL_FROM_ADDRESS
+     string "FROM_ADDRESS"
+     default ""
+
+   config SHARELATEX_EMAIL_SMTP_HOST
+     string "SMTP_HOST"
+     default "localhost"
+
+   config SHARELATEX_EMAIL_SMTP_PORT
+     string "SMTP_PORT"
+     default "25"
+
+   config SHARELATEX_EMAIL_SMTP_SECURE
+     bool "SMTP_SECURE"
+     default true
+
+   config SHARELATEX_EMAIL_SMTP_USER
+     string "SMTP_USER"
+     depends on SHARELATEX_EMAIL_SMTP_SECURE
+     default ""
+
+   config SHARELATEX_EMAIL_SMTP_PASS
+     string "SMTP_PASS"
+     depends on SHARELATEX_EMAIL_SMTP_SECURE
+     default ""
+
+   config SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH
+     bool "SMTP_TLS_REJECT_UNAUTH"
+     depends on SHARELATEX_EMAIL_SMTP_SECURE
+     default true
+
+   config SHARELATEX_EMAIL_SMTP_IGNORE_TLS
+     bool "SMTP_IGNORE_TLS"
+     depends on SHARELATEX_EMAIL_SMTP_SECURE
+     default false
+
+   config SHARELATEX_CUSTOM_EMAIL_FOOTER
+     string "CUSTOM_EMAIL_FOOTER"
+     default ""
+
+
+
+endif #      SERVICE_SHARELATEX
+

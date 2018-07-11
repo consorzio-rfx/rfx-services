@@ -1,0 +1,24 @@
+version: "3"
+services:
+  gitlab:
+    image: '${GITLAB_DOCKER_IMAGE}'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url '${GITLAB_EXTERNAL_URL}'
+        gitlab_default_theme '2'
+    ports:
+      - '80'
+      - '443'
+    labels:
+       - "reroute.ip=${REROUTE_IP}"
+       - "reroute.ports=${REROUTE_PORTS}"
+    volumes:
+      - "${STORE_DIR}/config:/etc/gitlab"
+      - "${STORE_DIR}/logs:/var/log/gitlab"
+      - "${STORE_DIR}/data:/var/opt/gitlab"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+         - node.role == manager
+         - node.hostname == ${HOSTNAME}

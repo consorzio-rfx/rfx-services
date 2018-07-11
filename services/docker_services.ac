@@ -1,0 +1,7 @@
+
+AX_KCONFIG_MODULES([SERVICE],
+		  [gitlab],[gitlab service],
+		  [sharelatex],[sharelatex service]
+		  )
+AC_SUBST([SERVICE_MODULES])
+

@@ -1,0 +1,75 @@
+version: '3'
+services:
+    sharelatex:
+        image: '${SHARELATEX_DOCKER_IMAGE}'
+        container_name: sharelatex
+        depends_on:
+            - mongo
+            - redis
+        privileged: true
+        deploy:
+          replicas: 1
+        ports:
+            - 80
+        links:
+            - mongo
+            - redis
+        labels:
+           - "reroute.ip=${REROUTE_IP}"
+           - "reroute.ports=${REROUTE_PORTS}"
+        volumes:
+            - ${STORE_DIR}/sharelatex_data:/var/lib/sharelatex
+            - ${STORE_DIR}/sharelatex_texlive:/usr/local/texlive
+            - ${STORE_DIR}/sharelatex_templates:/var/www/sharelatex/web/app/templates
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ${STORE_DIR}/sharelatex_logs:/var/log
+            - ${abs_srcdir}/RFX_publish.png:/var/www/sharelatex/web/public/img/RFX_publish.png
+            #- /var/clsi/compiles:/var/www/sharelatex/clsi/compiles
+        networks:
+          - back_tier
+        environment:
+            SHARELATEX_MONGO_URL: mongodb://mongo/sharelatex
+            SHARELATEX_REDIS_HOST: redis
+            SHARELATEX_APP_NAME: RFX ShareLaTeX
+
+            # SHARELATEX_SITE_URL: http://sharelatex.mydomain.com
+            SHARELATEX_NAV_TITLE: RFX Collaborative publication portal
+            SHARELATEX_HEADER_IMAGE_URL: /img/RFX_publish.png
+            SHARELATEX_ADMIN_EMAIL: andrea.rigoni@igi.cnr.it or gianluca.moro@igi.cnr.it
+            SHARELATEX_LEFT_FOOTER: '[{"text": "Powered by <a href=\"https://www.sharelatex.com\">ShareLaTeX</a>"}]'
+            SHARELATEX_RIGHT_FOOTER: '[{"text": "RFX Collaborative publication portal"} ]'
+
+            SHARELATEX_EMAIL_FROM_ADDRESS:
+            # SHARELATEX_EMAIL_AWS_SES_ACCESS_KEY_ID:
+            # SHARELATEX_EMAIL_AWS_SES_SECRET_KEY:
+            SHARELATEX_EMAIL_SMTP_HOST:
+            SHARELATEX_EMAIL_SMTP_PORT:
+            SHARELATEX_EMAIL_SMTP_SECURE:
+            SHARELATEX_EMAIL_SMTP_USER:
+            SHARELATEX_EMAIL_SMTP_PASS:
+            SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH:
+            SHARELATEX_EMAIL_SMTP_IGNORE_TLS:
+            SHARELATEX_CUSTOM_EMAIL_FOOTER:
+
+    mongo:
+        image: mongo
+        ports:
+          - 27017
+        volumes:
+          - ${STORE_DIR}/mongo_data:/data/db
+        networks:
+          - back_tier
+
+    redis:
+        image: redis
+        ports:
+            - 6379
+        volumes:
+            - ${STORE_DIR}/redis_data:/data
+        networks:
+          - back_tier
+
+
+networks:
+  back_tier:
+

@@ -18,13 +18,28 @@
 ##
 ## ////////////////////////////////////////////////////////////////////////// //
 
-include Common.mk
-AM_MAKEFLAGS = -j$(MAKE_PROCESS)
-ACLOCAL_AMFLAGS = -I conf/m4
-
-SUBDIRS = services
-
-all: ##@all all target
-all:
 
 
+# //////////////////////////////////////////////////////////////////////////// #
+# //  SERVICE_GITLAB  //////////////////////////////////////////////////////// #
+# //////////////////////////////////////////////////////////////////////////// #
+
+AX_KCONFIG_VAR_ENABLE([SERVICE_GITLAB],["Enable SERVICE_GITLAB"])
+
+AX_KCONFIG_VAR_WITH([GITLAB_DOCKER_IMAGE],["set with GITLAB_DOCKER_IMAGE"])
+AC_SUBST([GITLAB_DOCKER_IMAGE])
+
+AX_KCONFIG_VAR_WITH([GITLAB_COMPOSER_FILE],["set with GITLAB_COMPOSER_FILE"])
+AC_SUBST([GITLAB_COMPOSER_FILE])
+
+AX_KCONFIG_VAR_WITH([GITLAB_EXTERNAL_URL],["set with GITLAB_EXTERNAL_URL"])
+AC_SUBST([GITLAB_EXTERNAL_URL])
+
+AX_KCONFIG_VAR_WITH([GITLAB_PUBLIC_IP],["set with GITLAB_PUBLIC_IP"])
+AC_SUBST([GITLAB_PUBLIC_IP])
+
+AX_KCONFIG_VAR_WITH([GITLAB_PUBLIC_PORTS],["set with GITLAB_PUBLIC_PORTS"])
+AC_SUBST([GITLAB_PUBLIC_PORTS])
+
+
+# TODO: look for openssl command for gencert
