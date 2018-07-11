@@ -43,7 +43,7 @@ if SERVICE_GITLAB
 
   config GITLAB_COMPOSER_FILE
 	 string  "Docker composer file"
-	 default "${srcdir}/services/gitlab/docker-composer.yml"
+	 default "\${abs_srcdir}/services/gitlab/docker-composer.yml"
 	 ---help---
 	    GiLab docker composer file to use
 

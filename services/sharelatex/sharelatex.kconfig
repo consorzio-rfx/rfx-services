@@ -40,7 +40,7 @@ if  SERVICE_SHARELATEX
 
   config SHARELATEX_COMPOSER_FILE
 	 string  "Docker composer file"
-	 default "${srcdir}/services/sharelatex/docker-composer.yml"
+	 default "${abs_srcdir}/services/sharelatex/docker-composer.yml"
 	 ---help---
 	  Sharelatex docker composer file to use
 
@@ -63,6 +63,10 @@ if  SERVICE_SHARELATEX
       for public access. the left side is the published port while the right is
       the exposed service port within the ingress network visible in the docker
       docker-compose.yml file
+
+  config SHARELATEX_SITE_URL
+    string "SHARELATEX_SITE_URL"
+    default ""
 
 comment "SHARELATEX MAIL OPTIONS"
 

@@ -43,6 +43,7 @@ AS_IF([${srcdir}/conf/update_submodules.sh],
 dnl AX_KCONFIG /////////////////////////////////////////////////////////////////
 dnl see: m4/ax_enable_kconfig.m4
 AS_VAR_SET([srcdir],[${srcdir}])
+AS_VAR_SET([abs_srcdir],[$(cd ${srcdir}; $(pwd))])
 AS_VAR_SET([builddir],[$(pwd)])
 AX_KCONFIG([conf/kconfig])
 

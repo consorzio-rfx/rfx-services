@@ -32,7 +32,7 @@ services:
             SHARELATEX_REDIS_HOST: redis
             SHARELATEX_APP_NAME: RFX ShareLaTeX
 
-            # SHARELATEX_SITE_URL: http://sharelatex.mydomain.com
+            SHARELATEX_SITE_URL: http://sharelatex.mydomain.com
             SHARELATEX_NAV_TITLE: RFX Collaborative publication portal
             SHARELATEX_HEADER_IMAGE_URL: /img/RFX_publish.png
             SHARELATEX_ADMIN_EMAIL: andrea.rigoni@igi.cnr.it or gianluca.moro@igi.cnr.it
