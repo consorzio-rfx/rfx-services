@@ -70,6 +70,7 @@ chain_remove () {
   iptables -X $1
   iptables -t nat -F $1
   iptables -t nat -D OUTPUT -m addrtype --dst-type LOCAL -j $1
+  iptables -t nat -D PREROUTING -m addrtype --dst-type LOCAL -j $1
   iptables -t nat -X $1
 }
 
