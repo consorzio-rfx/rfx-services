@@ -46,6 +46,9 @@ AC_SUBST([SHARELATEX_SITE_URL])
 ## //  EMAIL  /////////////////////////////////////////////////////////////////////
 ## ////////////////////////////////////////////////////////////////////////////////
 
+AX_KCONFIG_VAR_WITH([SHARELATEX_EMAIL_FROM_ADDRESS],["set with SHARELATEX_EMAIL_FROM_ADDRESS"])
+AC_SUBST([SHARELATEX_EMAIL_FROM_ADDRESS])
+
 AX_KCONFIG_VAR_WITH([SHARELATEX_EMAIL_SMTP_HOST],["set with SHARELATEX_EMAIL_SMTP_HOST"])
 AC_SUBST([SHARELATEX_EMAIL_SMTP_HOST])
 
