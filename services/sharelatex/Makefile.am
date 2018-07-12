@@ -46,12 +46,14 @@ $(DIRS):
 	@ $(MKDIR_P) $@
 
 $(STORE_DIR)/sharelatex_texlive:
-	@ docker run --rm -t --entrypoint="/bin/sh" \
+	@ docker run --name sharelatex_texlive_copy \
+      --rm -t --entrypoint="/bin/sh" \
       -v $@:/texlive $(SHARELATEX_DOCKER_IMAGE) \
       -c "cp -a /usr/local/texlive/* /texlive"
 
 $(STORE_DIR)/sharelatex_templates:
-	@ docker run --rm -t --entrypoint="/bin/sh" \
+	@ docker run --name sharelatex_templates_copy \
+      --rm -t --entrypoint="/bin/sh" \
       -v $@:/templates $(SHARELATEX_DOCKER_IMAGE) \
       -c "cp -a /var/www/sharelatex/web/app/templates/* /templates"
 
@@ -63,7 +65,8 @@ stop-local:
 
 texlive-full: ##@sharelatex install scheme-full
 texlive-full: $(STORE_DIR)/sharelatex_texlive
-	docker run --rm -t --entrypoint="/bin/sh" \
+	docker run --name sharelatex_texlive_upgrade \
+      --rm -t --entrypoint="/bin/sh" \
       -v $<:/usr/local/texlive \
       $(SHARELATEX_DOCKER_IMAGE) \
       -c "tlmgr install scheme-full"
@@ -88,3 +91,11 @@ sl-docker: sharelatex_docker_image
 sl-build: ##@sharelatex build local sharelatex sources
 sl-build: sharelatex_src
 	@ $(error "Not supported yet")
+
+
+
+
+
+
+
+

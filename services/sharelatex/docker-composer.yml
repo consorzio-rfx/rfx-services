@@ -11,6 +11,7 @@ services:
           replicas: 1
         ports:
             - 80
+            - 443
         links:
             - mongo
             - redis

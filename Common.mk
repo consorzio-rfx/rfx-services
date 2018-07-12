@@ -44,12 +44,13 @@ ${DL} ${TMP}:
 .PHONY: reconfigure
 reconfigure: ##@miscellaneous re-run configure with last passed arguments
 	@ \
-	echo " -- Reconfiguring build with following parameters: -----------"; \
-	echo $(shell $(abs_top_builddir)/config.status --config);              \
-	echo " -------------------------------------------------------------"; \
-	echo ; \
-	cd '$(abs_top_builddir)' && \
-	$(abs_top_srcdir)/configure $(shell $(abs_top_builddir)/config.status --config);
+	  echo " -- Reconfiguring build with following parameters: -----------"; \
+	  echo $(shell $(abs_top_builddir)/config.status --config);              \
+	  echo " -------------------------------------------------------------"; \
+	  echo ; \
+	  cd '$(abs_top_builddir)' && \
+	  env -i TERM=$(TERM) $(SHELL) -l -c \
+	  "$(abs_top_srcdir)/configure $(shell $(abs_top_builddir)/config.status --config)";
 
 
 

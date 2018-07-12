@@ -5,10 +5,11 @@ services:
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url '${GITLAB_EXTERNAL_URL}'
-        gitlab_default_theme '2'
+        gitlab_default_theme '1'
     ports:
-      - '80'
-      - '443'
+      - 80
+      - 443
+      - 22
     labels:
        - "reroute.ip=${REROUTE_IP}"
        - "reroute.ports=${REROUTE_PORTS}"
