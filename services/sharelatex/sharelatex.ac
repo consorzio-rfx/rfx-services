@@ -41,6 +41,12 @@ AC_SUBST([SHARELATEX_PUBLIC_PORTS])
 AX_KCONFIG_VAR_WITH([SHARELATEX_SITE_URL],["set with SHARELATEX_SITE_URL"])
 AC_SUBST([SHARELATEX_SITE_URL])
 
+AX_KCONFIG_VAR_WITH([SHARELATEX_SSLCERT_FILE_CRT],["set with SHARELATEX_SSLCERT_FILE_CRT"])
+AC_SUBST([SHARELATEX_SSLCERT_FILE_CRT])
+
+AX_KCONFIG_VAR_WITH([SHARELATEX_SSLCERT_FILE_KEY],["set with SHARELATEX_SSLCERT_FILE_KEY"])
+AC_SUBST([SHARELATEX_SSLCERT_FILE_KEY])
+
 
 ## ////////////////////////////////////////////////////////////////////////////////
 ## //  EMAIL  /////////////////////////////////////////////////////////////////////

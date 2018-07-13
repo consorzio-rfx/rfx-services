@@ -21,10 +21,13 @@ services:
         volumes:
             - ${STORE_DIR}/sharelatex_data:/var/lib/sharelatex
             - ${STORE_DIR}/sharelatex_texlive:/usr/local/texlive
+            - ${STORE_DIR}/sharelatex_web:/var/www/sharelatex/web
             - ${STORE_DIR}/sharelatex_templates:/var/www/sharelatex/web/app/templates
             - /var/run/docker.sock:/var/run/docker.sock
             - ${STORE_DIR}/sharelatex_logs:/var/log
             - ${abs_srcdir}/RFX_publish.png:/var/www/sharelatex/web/public/img/RFX_publish.png
+            - ${SSLCERT_FILE_CRT}:/etc/sharelatex/ssl/ca.crt
+            - ${SSLCERT_FILE_KEY}:/etc/sharelatex/ssl/ca.key
             #- /var/clsi/compiles:/var/www/sharelatex/clsi/compiles
         networks:
           - back_tier

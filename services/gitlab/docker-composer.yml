@@ -3,9 +3,20 @@ services:
   gitlab:
     image: '${GITLAB_DOCKER_IMAGE}'
     environment:
-      GITLAB_OMNIBUS_CONFIG: |
-        external_url '${GITLAB_EXTERNAL_URL}'
-        gitlab_default_theme '1'
+      GITLAB_OMNIBUS_CONFIG: |-
+        external_url '${GITLAB_EXTERNAL_URL}';
+        nginx['ssl_certificate'] = "/etc/gitlab/ssl/ca.crt"
+        nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/ca.key"
+        gitlab_default_theme '1';
+        smtp_enable true;
+        smtp_address 'rfxsmtp.igi.cnr.it';
+        smtp_port 25;
+        smtp_domain 'igi.cnr.it';
+        smtp_tls false;
+        smtp_openssl_verify_mode 'none';
+        smtp_enable_starttls_auto false;
+        smtp_ssl false;
+        smtp_force_ssl false;
     ports:
       - 80
       - 443
@@ -15,6 +26,8 @@ services:
        - "reroute.ports=${REROUTE_PORTS}"
     volumes:
       - "${STORE_DIR}/config:/etc/gitlab"
+      - "${SSLCERT_FILE_CRT}:/etc/gitlab/ssl/ca.crt"
+      - "${SSLCERT_FILE_KEY}:/etc/gitlab/ssl/ca.key"
       - "${STORE_DIR}/logs:/var/log/gitlab"
       - "${STORE_DIR}/data:/var/opt/gitlab"
     deploy:

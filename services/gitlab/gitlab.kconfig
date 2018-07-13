@@ -77,6 +77,18 @@ if SERVICE_GITLAB
       the exposed service port within the ingress network visible in the docker
       docker-compose.yml file
 
+  config GITLAB_SELFSIGNED_SSL
+    bool GITLAB_SELFSIGNED_SSL
+    default y
+
+  config GITLAB_SSLCERT_FILE_CRT
+    string "GITLAB_SSLCERT_FILE_CRT"
+    depends on !GITLAB_SELFSIGNED_SSL
+
+  config GITLAB_SSLCERT_FILE_KEY
+    string "GITLAB_SSLCERT_FILE_KEY"
+    depends on !GITLAB_SELFSIGNED_SSL
+
 
 endif # SERVICE_GITLAB
 

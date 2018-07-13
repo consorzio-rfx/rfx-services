@@ -19,3 +19,17 @@ comment "Docker Services"
   source services/sharelatex/sharelatex.kconfig
 
 # endif # ENABLE_DOCKER_SERVICES
+
+
+# menu CONFIG
+#
+#    config SMTP_SERVER_HOST
+#      string "SMTP_SERVER_HOST"
+#      default "rfxsmtp.igi.cnr.it"
+#
+#    config SMTP_SERVER_PORT
+#      string "SMTP_SERVER_PORT"
+#      default "25"
+#
+#
+# endmenu

@@ -4,6 +4,10 @@ SWARM_NAME   ?= mildsrv
 SERVICE_NAME  = $(SWARM_NAME)_$(SERVICE)
 
 
+## export \
+##        SMTP_SERVER_HOST \
+##        SMTP_SERVER_PORT
+
 .PHONY: swarm-init swarm-leave start stop ps logs shell
 
 swarm-init: ##@docker initialize this machine as a swarm manager

@@ -17,7 +17,9 @@ export abs_srcdir \
        STORE_DIR \
        REROUTE_IP \
        REROUTE_PORTS \
-       SHARELATEX_DOCKER_IMAGE
+       SHARELATEX_DOCKER_IMAGE \
+       SSLCERT_FILE_CRT \
+       SSLCERT_FILE_KEY
 
 export SHARELATEX_SITE_URL \
        SHARELATEX_EMAIL_FROM_ADDRESS \
@@ -57,7 +59,38 @@ $(STORE_DIR)/sharelatex_templates:
       -v $@:/templates $(SHARELATEX_DOCKER_IMAGE) \
       -c "cp -a /var/www/sharelatex/web/app/templates/* /templates"
 
-start-local: | $(DIRS) $(STORE_DIR)/sharelatex_texlive $(STORE_DIR)/sharelatex_templates
+$(STORE_DIR)/sharelatex_web:
+	@ docker run --name sharelatex_templates_copy \
+      --rm -t --entrypoint="/bin/sh" \
+      -v $@:/web $(SHARELATEX_DOCKER_IMAGE) \
+      -c "cp -a /var/www/sharelatex/web/* /web"
+
+LOCAL_DIRS = $(STORE_DIR)/sharelatex_texlive \
+             $(STORE_DIR)/sharelatex_templates \
+             $(STORE_DIR)/sharelatex_web
+
+dirs: $(DIRS)
+local_dirs: $(LOCAL_DIRS)
+
+
+## CERTIFICATES
+
+SSLCERT_FILE_CRT = $(or $(SHARELATEX_SSLCERT_FILE_CRT),$(abs_builddir)/selfsigned_$(HOSTNAME).crt)
+SSLCERT_FILE_KEY = $(or $(SHARELATEX_SSLCERT_FILE_KEY),$(abs_builddir)/selfsigned_$(HOSTNAME).key)
+
+ssl_cert: ##@gitlab generate selfsigned certificate for ${HOSTNAME}
+ssl_cert: ${SSLCERT_FILES}
+
+# self sign certificates if they don't exist
+SSLCERT_FILES = $(SSLCERT_FILE_CRT) $(SSLCERT_FILE_KEY)
+${SSLCERT_FILES}:  | $(DIRS)
+	@ $(info generating cert for $@) \
+	  . $(srcdir)/gencert.sh $(basename $(notdir $@)) $(dir $@)
+
+
+
+
+start-local: | ${SSLCERT_FILES} $(DIRS) $(LOCAL_DIRS)
 	@ $(info "after first deploy navigate to http://${REROUTE_IP}/launchpad to setup the initial credentials") \
       $(info "To exdend texlive to full scheme perform the following target once: make texlive-full")
 
@@ -88,11 +121,23 @@ sl-docker: export SHARELATEX_TAG=$(SHARELATEX_DOCKER_IMAGE)
 sl-docker: sharelatex_docker_image
 	@ $(MAKE) -C sharelatex_docker_image
 
+
+
 sl-build: ##@sharelatex build local sharelatex sources
 sl-build: sharelatex_src
-	@ $(error "Not supported yet")
+	@
 
 
+# RUN cd /var/www/sharelatex; \
+# 	npm install; \
+# 	grunt install; \
+# 	bash -c 'source ./bin/install-services'; \
+# 	cd web; \
+# 	npm install; \
+# 	npm install bcrypt; \
+# 	cd modules; \
+# 	git clone https://github.com/sharelatex/launchpad-web-module.git launchpad; \
+# 	grunt compile;
 
 
 
