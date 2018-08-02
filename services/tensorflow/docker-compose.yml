@@ -1,0 +1,10 @@
+version: '3'
+services:
+    tensorflow:
+        image: '${DOCKER_IMAGE}'
+        deploy:
+          replicas: 1
+        #volumes:
+          #- ${STORE_DIR}/notebooks:/notebooks
+        ports:
+            - 8888:8888

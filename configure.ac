@@ -96,5 +96,6 @@ AC_CONFIG_FILES(
 				 services/gitlab/Makefile
 				 services/sharelatex/Makefile
 				 services/interlock/Makefile
+				 services/tensorflow/Makefile
                )
 AC_OUTPUT

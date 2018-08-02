@@ -49,7 +49,7 @@ CLEANFILES   = ${STORE_DIR}/config/ssl/*
 ## //  SERVICE  ///////////////////////////////////////////////////////////////////
 ## ////////////////////////////////////////////////////////////////////////////////
 
-COMPOSER_FILE = $(or $(GITLAB_COMPOSER_FILE),$(srcdir)/docker-composer.yml)
+COMPOSER_FILE = $(or $(GITLAB_COMPOSER_FILE),$(srcdir)/docker-compose.yml)
 
 SWARM_NAME    = gitlab
 SERVICE       = gitlab

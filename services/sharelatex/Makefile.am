@@ -3,7 +3,7 @@ include $(top_srcdir)/Common.mk
 include $(top_srcdir)/services/docker_services.mk
 
 SHARELATEX_DOCKER_IMAGE ?= consorziorfx/sharelatex:latest
-COMPOSER_FILE  = $(srcdir)/docker-composer.yml
+COMPOSER_FILE  = $(srcdir)/docker-compose.yml
 SWARM_NAME     = sharelatex
 SERVICE        = sharelatex
 

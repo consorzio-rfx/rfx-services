@@ -32,7 +32,8 @@ while [[ "$1" == -* ]] ; do
 			exit
 			;;
         -v|--verbose)
-	        set -o verbose
+	        #set -ex -o verbose
+			set -ex
 			shift
 			;;
         --debug)
@@ -96,7 +97,7 @@ reroute_ports () {
   inspect_net () { echo $(docker network inspect docker_gwbridge --format="$1"); }
   length  () { var=$(inspect "{{range \$i := $1}}o{{end}}"); echo ${#var}; }
   reroute_ip=$(inspect '{{index .Spec.TaskTemplate.ContainerSpec.Labels "reroute.ip"}}')
-  [ $reroute_ip ] || return;
+  [ ${reroute_ip} ] || return 0;
   reroute_ports=$(inspect '{{index .Spec.TaskTemplate.ContainerSpec.Labels "reroute.ports"}}')
   sbox_ip=$(inspect_net '{{(index .Containers "ingress-sbox").IPv4Address}}')
   sbox_ip=${sbox_ip%/*} # remove mask
