@@ -1,8 +1,15 @@
 
 NODOCKERBUILD = %
-SWARM_NAME   ?= mildsrv
-SERVICE_NAME  = $(SWARM_NAME)_$(SERVICE)
 
+mkfile_path = $(abspath $(lastword $(MAKEFILE_LIST)))
+current_dir = $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
+
+SWARM_NAME    ?= $(current_dir)
+SERVICE       ?= $(current_dir)
+SERVICE_NAME  ?= $(SWARM_NAME)_$(SERVICE)
+
+VENDOR        ?= rfx
+VERSION       ?= 1.0
 
 ## export \
 ##        SMTP_SERVER_HOST \

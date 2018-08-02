@@ -2,7 +2,6 @@ include $(top_srcdir)/Common.mk
 include $(top_srcdir)/services/docker_services.mk
 
 COMPOSER_FILE = $(srcdir)/docker-compose.yml
-SERVICE = web1
 
 SWARM_HOST = tcp://localhost:3376
 

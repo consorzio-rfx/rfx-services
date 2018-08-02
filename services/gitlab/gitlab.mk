@@ -51,8 +51,6 @@ CLEANFILES   = ${STORE_DIR}/config/ssl/*
 
 COMPOSER_FILE = $(or $(GITLAB_COMPOSER_FILE),$(srcdir)/docker-compose.yml)
 
-SWARM_NAME    = gitlab
-SERVICE       = gitlab
 
 start-local: ${SSLCERT_FILE} | $(DIRS)
 stop-local:

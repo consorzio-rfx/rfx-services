@@ -4,8 +4,6 @@ include $(top_srcdir)/services/docker_services.mk
 
 SHARELATEX_DOCKER_IMAGE ?= consorziorfx/sharelatex:latest
 COMPOSER_FILE  = $(srcdir)/docker-compose.yml
-SWARM_NAME     = sharelatex
-SERVICE        = sharelatex
 
 STORE_DIR     ?= $(abs_builddir)
 REROUTE_IP     = $(SHARELATEX_PUBLIC_IP)

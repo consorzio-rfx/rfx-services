@@ -97,5 +97,6 @@ AC_CONFIG_FILES(
 				 services/sharelatex/Makefile
 				 services/interlock/Makefile
 				 services/tensorflow/Makefile
+				 services/spark/Makefile
                )
 AC_OUTPUT

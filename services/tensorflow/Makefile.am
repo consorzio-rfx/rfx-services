@@ -4,8 +4,6 @@ include $(top_srcdir)/services/docker_services.mk
 
 DOCKER_IMAGE  ?= $(or $(TENSORFLOW_DOCKER_IMAGE),tensorflow/tensorflow)
 COMPOSER_FILE ?= $(srcdir)/docker-compose.yml
-SWARM_NAME     = tensorflow
-SERVICE        = tensorflow
 
 STORE_DIR     ?= $(abs_builddir)
 REROUTE_IP     = $(TENSORFLOW_PUBLIC_IP)
