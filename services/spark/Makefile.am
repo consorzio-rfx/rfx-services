@@ -12,7 +12,10 @@ export abs_srcdir \
 
 LOCAL_DIRS = ${STORE_DIR}/redis_data
 
-DIRECTORIES += $(LOCAL_DIRS)
+DIRECTORIES = $(LOCAL_DIRS)
+
+$(DIRECTORIES):
+	@ $(MKDIR_P) $@
 
 build:
 	@ docker build -t $(DOCKER_IMAGE) $(srcdir)
