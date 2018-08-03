@@ -70,7 +70,7 @@ portainer-init:
       docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
 
 reroute: $(abs_top_srcdir)/services/service_reroute.sh
-	@ [ -n "${REROUTE_IP}" ] && sudo -E $^ -s $(SERVICE_NAME) reroute_ports
+	@ [ ${REROUTE_IP} ] && sudo -E $^ -s $(SERVICE_NAME) reroute_ports ||:
 
 reroute-clear: $(abs_top_srcdir)/services/service_reroute.sh
-	@ [ -n "${REROUTE_IP}" ] && sudo -E $^ -s $(SERVICE_NAME) clear_ports
+	@ [ ${REROUTE_IP} ] && sudo -E $^ -s $(SERVICE_NAME) clear_ports ||:
