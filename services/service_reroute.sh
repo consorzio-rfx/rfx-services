@@ -9,6 +9,8 @@ SCRIPTNAME=$(basename "$0")
 SCRIPT_DIR=$(dirname "$0")
 CONFIG_FILE=
 
+alias iptables='sudo iptables'
+
 print_help() {
 cat << EOF
 
