@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
 
-  master:
+  spark:
     image: ${DOCKER_IMAGE}
     command: bin/spark-class org.apache.spark.deploy.master.Master -h master
     hostname: master
