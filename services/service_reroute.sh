@@ -9,7 +9,6 @@ SCRIPTNAME=$(basename "$0")
 SCRIPT_DIR=$(dirname "$0")
 CONFIG_FILE=
 
-alias iptables='sudo iptables'
 
 print_help() {
 cat << EOF
@@ -68,25 +67,25 @@ fi
 IPT_CHAIN=${SERVICE_NAME}
 
 chain_remove () {
-  iptables -F $1
-  iptables -D FORWARD -j $1
-  iptables -X $1
-  iptables -t nat -F $1
-  iptables -t nat -D OUTPUT -m addrtype --dst-type LOCAL -j $1
-  iptables -t nat -D PREROUTING -m addrtype --dst-type LOCAL -j $1
-  iptables -t nat -X $1
+  sudo iptables -F $1
+  sudo iptables -D FORWARD -j $1
+  sudo iptables -X $1
+  sudo iptables -t nat -F $1
+  sudo iptables -t nat -D OUTPUT -m addrtype --dst-type LOCAL -j $1
+  sudo iptables -t nat -D PREROUTING -m addrtype --dst-type LOCAL -j $1
+  sudo iptables -t nat -X $1
 }
 
 chain_init () {
-  iptables -N $1
+  sudo iptables -N $1
   id=$(sudo iptables --line-numbers -L FORWARD  | grep DOCKER-INGRESS | awk '{print $1; exit}')
-  iptables -I FORWARD $id -j $1
-  # iptables -A $1 -j RETURN
+  sudo iptables -I FORWARD $id -j $1
+  # sudo iptables -A $1 -j RETURN
 
-  iptables -t nat -N $1
-  iptables -t nat -A PREROUTING -m addrtype --dst-type LOCAL -j $1
-  iptables -t nat -A OUTPUT -m addrtype --dst-type LOCAL -j $1
-  # iptables -t nat -A $1 -j RETURN
+  sudo iptables -t nat -N $1
+  sudo iptables -t nat -A PREROUTING -m addrtype --dst-type LOCAL -j $1
+  sudo iptables -t nat -A OUTPUT -m addrtype --dst-type LOCAL -j $1
+  # sudo iptables -t nat -A $1 -j RETURN
 }
 
 
@@ -130,19 +129,19 @@ reroute_ports () {
    find_port ${p_src}
    echo "[reroute_DBG] $IPT_CHAIN: routing public ${reroute_ip}:${p_dst} " \
         "to $sbox_ip:$dest_port with protocol $dest_prot";
-   iptables -A ${IPT_CHAIN} \
+   sudo iptables -A ${IPT_CHAIN} \
             -p $dest_prot -m $dest_prot --dport ${p_dst} -j ACCEPT
-   iptables -A ${IPT_CHAIN} \
+   sudo iptables -A ${IPT_CHAIN} \
             -p $dest_prot -m state --state RELATED,ESTABLISHED \
             -m $dest_prot --sport ${p_dst} -j ACCEPT
 
-   iptables -t nat -A ${IPT_CHAIN} \
+   sudo iptables -t nat -A ${IPT_CHAIN} \
         -d $reroute_ip/32 -p ${dest_prot} --dport ${p_dst} \
         -j DNAT --to-destination ${sbox_ip}:${dest_port};
   done
   #
-  iptables -A ${IPT_CHAIN} -j RETURN
-  iptables -t nat -A ${IPT_CHAIN} -j RETURN
+  sudo iptables -A ${IPT_CHAIN} -j RETURN
+  sudo iptables -t nat -A ${IPT_CHAIN} -j RETURN
 
 }
 
