@@ -92,11 +92,12 @@ AC_CONFIG_FILES(
                  Makefile
 				 .gitignore
 				 services/Makefile
-                 services/btsync/Makefile
+         services/btsync/Makefile
 				 services/gitlab/Makefile
 				 services/sharelatex/Makefile
 				 services/interlock/Makefile
 				 services/tensorflow/Makefile
 				 services/spark/Makefile
+				 services/jenkins/Makefile
                )
 AC_OUTPUT

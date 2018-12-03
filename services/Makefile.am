@@ -25,7 +25,5 @@ list:
       echo "Eanbled services: $(SERVICE_MODULES)"; \
       echo;
 
-
-
 all: start
 

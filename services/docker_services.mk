@@ -46,7 +46,7 @@ ps:
 
 logs: ##@docker_services see logs
 logs:
-	@ $(info loking gitlab logs) \
+	@ $(info loking service logs) \
 	  docker service logs $(SERVICE_NAME) -f
 
 shell: ##@docker_services enter instance shell

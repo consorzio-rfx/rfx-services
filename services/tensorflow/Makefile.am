@@ -11,7 +11,7 @@ REROUTE_PORTS  = $(TENSORFLOW_PUBLIC_PORTS)
 
 export abs_srcdir \
        abs_builddir \
-	   DOCKER_IMAGE \
+	     DOCKER_IMAGE \
        STORE_DIR \
        REROUTE_IP \
        REROUTE_PORTS
@@ -20,5 +20,7 @@ all: start
 
 start-local: | $(LOCAL_DIRS)
 stop-local:
+
+
 
 
