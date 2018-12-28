@@ -69,6 +69,12 @@ portainer-init:
 	@ docker volume create portainer_data; \
       docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
 
+
+docker-registry-init: ##@docker_services registry init (provide an image registry at localhost:5000)
+docker-registry-init:
+	@ docker service create --name registry --publish 5000:5000 registry:2
+
+
 reroute: $(abs_top_srcdir)/services/service_reroute.sh
 	@ [ ${REROUTE_IP} ] && sudo -E $^ -s $(SERVICE_NAME) reroute_ports ||:
 
