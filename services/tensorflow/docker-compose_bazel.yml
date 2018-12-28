@@ -1,0 +1,10 @@
+version: '3'
+services:
+    tf-build:
+        image: '${DOCKER_IMAGE}'
+        deploy:
+          replicas: 2
+        # volumes:
+        #    - ${BAZEL_CACHEDIR}:/data
+        ports:
+            - 8980:8980

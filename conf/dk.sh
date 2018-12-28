@@ -83,6 +83,8 @@ get_md5_container() {
 DOCKER_BIN=${DOCKER_BIN:-docker}
 DOCKER_SCRIPTPATH=${DOCKER_SCRIPTPATH:-.docker-build}
 
+DOCKER_CONTAINER="$(echo -e "${DOCKER_CONTAINER}" | tr -d '[:space:]')"
+
 # append md5 to docker container
 DOCKER_CONTAINER_PREFIX=${DOCKER_CONTAINER}
 DOCKER_CONTAINER=$(get_md5_container ${DOCKER_CONTAINER}; echo $_ans)
@@ -96,8 +98,10 @@ user_id=$(id -u)
 user_group=$(id -g)
 user_home=${HOME}
 
-
-
+DOCKER_NETWORKS_VAR=""
+for i in ${DOCKER_NETWORKS}; do
+DOCKER_NETWORKS_VAR="${DOCKER_NETWORKS_VAR} --network $i"
+done
 
 ## ////////////////////////////////////////////////////////////////////////////////
 ## //  FUNCTIONS  /////////////////////////////////////////////////////////////////
@@ -116,7 +120,8 @@ DOCKER_CONTAINER=${DOCKER_CONTAINER}
 DOCKER_CONTAINER_ID=$(dk_get_container_id ${DOCKER_CONTAINER}; echo $_ans)
 DOCKER_IMAGE=${DOCKER_IMAGE}
 DOCKER_IMAGE_ID=$(dk_get_image_id ${DOCKER_IMAGE}; echo $_ans)
-USER=${USER}
+DOCKER_NETWORKS="${DOCKER_NETWORKS}"
+user_login=${USER}
 user_id=${user_id}
 user_group=${user_group}
 user_home=${user_home}
