@@ -193,8 +193,14 @@ build() {
 	if [ -n "${DOCKER_DOCKERFILE}" ]; then
 	  DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} -f ${DOCKER_DOCKERFILE}"
 	fi
+	echo ${DOCKER_IMAGE}
 	echo docker build ${DOCKER_BUILD_ARGS} -t ${DOCKER_IMAGE} ${DOCKER_URL}
-	docker build ${DOCKER_BUILD_ARGS} -t ${DOCKER_IMAGE} ${DOCKER_URL}
+	docker build \
+	  --build-arg DOCKER_IMAGE \
+		--build-arg USER \
+		--build-arg DISPLAY \
+		--build-arg LANG \
+		${DOCKER_BUILD_ARGS} -t ${DOCKER_IMAGE} ${DOCKER_URL}
 }
 
 
