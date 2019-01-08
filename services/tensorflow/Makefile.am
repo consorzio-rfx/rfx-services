@@ -22,6 +22,32 @@ start-local: | $(LOCAL_DIRS)
 stop-local:
 
 
+##           ##
+##   CMAKE   ##
+##           ##
+
+define _ext_cmake
+$(eval
+.PHONY: $1/CMakeCache.txt
+$1/CMakeLists.txt: | $1
+$1/CMakeCache.txt: $1/CMakeLists.txt
+	@ cd $1; cmake $($(subst -,_,$(subst ' ',_,$(subst .,_,$1)))_CMAKE_ARGS) .
+$1/Makefile: $1/CMakeCache.txt
+)
+endef
+
+
+define _ext_cmake_offsrc
+$(eval
+.PHONY: $3/CMakeCache.txt
+$2/CMakeLists.txt: | $2
+$3/CMakeCache.txt: $2/CMakeLists.txt | $3
+	@ cd $3; cmake $($(subst -,_,$(subst ' ',_,$(subst .,_,$1)))_CMAKE_ARGS) $(abspath $2)
+$2/Makefile: $3/CMakeCache.txt
+)
+endef
+
+
 
 ##    .########.########....########..##.....##.####.##.......########.
 ##    ....##....##..........##.....##.##.....##..##..##.......##.....##
@@ -40,6 +66,8 @@ export BAZEL_CACHEDIR
 export DOCKER_CONTAINER
 export DOCKER_IMAGE
 export DOCKER_NETWORKS
+export DOCKER_URL
+export DOCKER_DOCKERFILE
 
 DSHELL = $(top_srcdir)/conf/dk.sh
 $(DOCKER_TARGETS): SHELL = $(DSHELL)
@@ -64,19 +92,21 @@ define _install_new_git =
 endef
 
 
-DOCKER_TARGETS = tf-init
-tf-init: ##@tf build process
+DOCKER_TARGETS = tf-%
+tf-%: DOCKER_CONTAINER = tf-build
+
+tf-init: ##@tf init docker container for build process
 tf-init: DOCKER_IMAGE = $(tf_DOCKER_IMAGE)
-tf-init: DOCKER_CONTAINER = tf-build
+tf-init: DOCKER_URL = $(srcdir)/tensorflow-docker
 tf-init: | tensorflow pip-install
 	@ cd tensorflow;
 
-tensorflow/.tf_configure.bazelrc: | tf-init
+tensorflow/.tf_configure.bazelrc: tf-init
 	@ cd tensorflow; ./configure
 
 tf-configure: tensorflow/.tf_configure.bazelrc
 
-tf-build: tf-configure | tf-init
+tf-build: tf-configure tf-init
 	@ cd tensorflow; \
       bazel build --remote_http_cache=http://localhost:8980 \
        --spawn_strategy=standalone \
@@ -85,6 +115,45 @@ tf-build: tf-configure | tf-init
 tf-shell: ##@tf enter container shell
 tf-shell: | tf-init
 	@ /bin/bash
+
+
+
+
+##        ..######..########..########......#######..########.....########.##.....##....###....##.....##.########..##.......########
+##        .##....##.##.....##.##.....##....##.....##.##.....##....##........##...##....##.##...###...###.##.....##.##.......##......
+##        .##.......##.....##.##.....##....##.....##.##.....##....##.........##.##....##...##..####.####.##.....##.##.......##......
+##        .##.......########..########.....##.....##.########.....######......###....##.....##.##.###.##.########..##.......######..
+##        .##.......##........##...........##.....##.##...........##.........##.##...#########.##.....##.##........##.......##......
+##        .##....##.##........##...........##.....##.##...........##........##...##..##.....##.##.....##.##........##.......##......
+##        ..######..##........##............#######..##...........########.##.....##.##.....##.##.....##.##........########.########
+
+
+
+
+DOWNLOADS += cppop-example
+cppop-example: ##@cppop download example
+cppop_example_URL = https://github.com/andrearigoni/tensorflow-cpp-op-example.git
+cppop_example_BRANCH = master
+cppop_example_DIR = cppop-example
+
+DOCKER_TARGETS += cppop-example/Makefile
+cppop-example/Makefile: DOCKER_CONTAINER = tf-build
+$(call _ext_cmake,cppop-example)
+
+DOCKER_TARGETS += ext-cppop-example
+ext-cppop-example: ##@cppop compile example
+ext-cppop-example: DOCKER_CONTAINER = tf-build
+ext-cppop-example: tf-init cppop-example/Makefile | cppop-example
+	@ make -C cppop-example all
+
+DOCKER_TARGETS += ext-cppop-example-test
+ext-cppop-example: ##@cppop run tests
+ext-cppop-example-test: DOCKER_CONTAINER = tf-build
+ext-cppop-example-test: ext-cppop-example
+	@ cd cppop-example; \
+	  LD_LIBRARY_PATH=$$(pwd) python3 inner_product_tests.py
+
+
 
 
 
@@ -251,12 +320,15 @@ bb-build: | $(BB_BAZEL_FILES) bb-init
 	  bazel run :bbb_worker_push;
 
 
-
 ## WORKING HERE .... how to turn this composer file into a swarmable service
 ## try to investigate REX-Ray volume share
 service-bb-up: 
 	@ cd $(srcdir)/buildbarn-compose; \
 	  source run.sh
+
+
+
+
 
 
 
