@@ -1,0 +1,23 @@
+version: "3"
+services:
+  newaccount:
+    image: php:7.3-apache
+    ports:
+      - 80
+#      - 443
+#      - 22
+    labels:
+       - "reroute.ip=${REROUTE_IP}"
+       - "reroute.ports=${REROUTE_PORTS}"
+    volumes:
+      - "${HTML_DIR}:/var/www/html"
+#      - "${SSLCERT_FILE_CRT}:/etc/gitlab/ssl/ca.crt"
+#      - "${SSLCERT_FILE_KEY}:/etc/gitlab/ssl/ca.key"
+#      - "${STORE_DIR}/logs:/var/log/gitlab"
+#      - "${STORE_DIR}/data:/var/opt/gitlab"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+         - node.role == manager
+         - node.hostname == ${HOSTNAME}
