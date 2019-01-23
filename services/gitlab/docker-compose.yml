@@ -5,8 +5,8 @@ services:
     environment:
       GITLAB_OMNIBUS_CONFIG: |-
         external_url '${GITLAB_EXTERNAL_URL}';
-        nginx['ssl_certificate'] = "/etc/gitlab/ssl/ca.crt"
-        nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/ca.key"
+        nginx['ssl_certificate'] = "/etc/gitlab/ssl/ca.crt";
+        nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/ca.key";
         gitlab_default_theme '1';
         smtp_enable true;
         smtp_address 'rfxsmtp.igi.cnr.it';

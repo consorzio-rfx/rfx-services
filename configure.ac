@@ -95,6 +95,7 @@ AC_CONFIG_FILES(
          services/btsync/Makefile
 				 services/gitlab/Makefile
 				 services/sharelatex/Makefile
+				 services/newaccount/Makefile
 				 services/interlock/Makefile
 				 services/tensorflow/Makefile
 				 services/spark/Makefile
