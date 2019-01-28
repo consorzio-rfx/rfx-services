@@ -27,3 +27,19 @@ list:
 
 all: start
 
+## write enabled sevices in config file
+$(file > rfx-services.enabled, $(SERVICE_MODULES))
+sysconf_DATA = $(builddir)/rfx-services.enabled
+
+## TODO: move this in confiugre
+libexecdir = $(datadir)/rfx-services/
+
+# $prefix/share/rfx-services
+libexec_SCRIPTS = $(srcdir)/service_reroute.sh
+
+# $prefix/etc/init.d
+init_ddir = $(sysconfdir)/init.d
+init_d_SCRIPTS = $(builddir)/rfx-services.sh
+
+systemddir = $(sysconfdir)/systemd/system/
+systemd_DATA = $(builddir)/rfx-services.service
