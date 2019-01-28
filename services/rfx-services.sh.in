@@ -15,10 +15,44 @@ RUNAS=root
 
 
 
+# dk_test_status [cnt_name] [status]
+# status =  created, restarting, running, paused, exited, healthy
+dk_test_status() {
+#  cnt_id=$(docker ps -a -f name=$1 -q)
+  cnt_st=$(docker ps -a -f name=$1 -f status=$2 -q)
+#	[ x"${cnt_id}" = x"${cnt_st}" ] && return 0 || return 1
+  [ ${cnt_st} ] && return 0 || return 1
+}
+
+# dk_get_status [cnt_name] [ans]
+# return readable status of container either in _ans or $2
+dk_get_status() {
+  _ans="unhandled"
+	$(dk_test_status $1 created) && _ans="created"
+	$(dk_test_status $1 running) && _ans="running"
+	$(dk_test_status $1 restarting) && _ans="restarting"
+	$(dk_test_status $1 paused) && _ans="paused"
+	$(dk_test_status $1 exited) && _ans="exited"
+	$(dk_test_status $1 healthy) && _ans="healthy"
+  [ -n "$2" ] && eval $2="$_ans"
+}
+
+retry() {
+   n=0
+   until [ $n -ge 5 ]
+   do
+      echo "testing for $@  [ attempt = $n ]"
+      $@ && break
+      n=$[$n+1]
+      sleep 5
+   done
+}
+
 start() {
   echo 'Rerouting ports for rfx services…' >&2
   enabled_sevices="$(cat ${sysconfdir}/rfx-services.enabled)"
   for s in ${enabled_sevices}; do
+   retry dk_test_status ${s}_${s} running;
    local CMD="$SCRIPT -s ${s}_${s} reroute_ports";
    echo ${CMD};
    su -c "$CMD" $RUNAS;
