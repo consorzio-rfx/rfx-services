@@ -92,6 +92,8 @@ AC_CONFIG_FILES(
                  Makefile
 				 .gitignore
 				 services/Makefile
+				 services/rfx-services.sh
+				 services/rfx-services.service
          services/btsync/Makefile
 				 services/gitlab/Makefile
 				 services/sharelatex/Makefile
@@ -100,5 +102,7 @@ AC_CONFIG_FILES(
 				 services/tensorflow/Makefile
 				 services/spark/Makefile
 				 services/jenkins/Makefile
+				 services/mediawiki/Makefile
+				 services/wikijs/Makefile
                )
 AC_OUTPUT

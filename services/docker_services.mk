@@ -8,6 +8,10 @@ SWARM_NAME    ?= $(current_dir)
 SERVICE       ?= $(current_dir)
 SERVICE_NAME  ?= $(SWARM_NAME)_$(SERVICE)
 
+export DOCKER_IMAGE \
+	   COMPOSER_FILE
+
+
 VENDOR        ?= rfx
 VERSION       ?= 1.0
 

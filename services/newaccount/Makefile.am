@@ -17,5 +17,12 @@ export 	HTML_DIR \
 start-local:
 stop-local:
 
-all: start
+#all: start
+
+all: build
+
+build: Dockerfile
+	@ $(info create docker image) \
+	  cp $(srcdir)/$< $(builddir)/$<;
+	  docker build -t consorziorfx/php-ldap:latest .
 

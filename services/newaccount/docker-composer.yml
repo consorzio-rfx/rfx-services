@@ -1,7 +1,8 @@
 version: "3"
 services:
   newaccount:
-    image: php:7.3-apache
+    hostname: localhost
+    image: consorziorfx/php-ldap:latest
     ports:
       - 80
 #      - 443
