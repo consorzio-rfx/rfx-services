@@ -1,7 +1,13 @@
 
 AX_KCONFIG_MODULES([SERVICE],
 		  [gitlab],[gitlab service],
-		  [sharelatex],[sharelatex service]
+		  [sharelatex],[sharelatex service],
+		  [newaccount],[newaccount service],
+		  [jenkins],[jenkins service],
+		  [mediawiki],[mediawiki service],
+		  [spark],[spark service],
+		  [tensoflow],[tensoflow service],
+		  [wikijs],[wikijs service]
 		  )
 AC_SUBST([SERVICE_MODULES])
 

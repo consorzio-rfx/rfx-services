@@ -18,6 +18,32 @@ comment "Docker Services"
   # //  SHARELATEX  //
   source services/sharelatex/sharelatex.kconfig
 
+
+  config SERVICE_NEWACCOUNT
+    bool "NEWACCOUNT sevice"
+    default y
+
+  config SERVICE_JENKINS
+    bool "JENKINS sevice"
+    default n
+
+  config SERVICE_MEDIAWIKI
+    bool "MEDIAWIKI sevice"
+    default n
+
+  config SERVICE_SPARK
+    bool "SPARK sevice"
+    default n
+
+  config SERVICE_TENSORFLOW
+    bool "TENSORFLOW sevice"
+    default n
+
+  config SERVICE_WIKIJS
+    bool "WIKIJS sevice"
+    default n
+
+
 # endif # ENABLE_DOCKER_SERVICES
 
 
