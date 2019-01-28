@@ -28,7 +28,9 @@ list:
 all: start
 
 ## write enabled sevices in config file
-$(file > rfx-services.enabled, $(SERVICE_MODULES))
+rfx-services.enabled:
+	@ echo $(SERVICE_MODULES) > $@;
+
 sysconf_DATA = $(builddir)/rfx-services.enabled
 
 ## TODO: move this in confiugre
