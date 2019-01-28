@@ -100,5 +100,7 @@ AC_CONFIG_FILES(
 				 services/tensorflow/Makefile
 				 services/spark/Makefile
 				 services/jenkins/Makefile
+				 services/mediawiki/Makefile
+				 services/wikijs/Makefile
                )
 AC_OUTPUT
