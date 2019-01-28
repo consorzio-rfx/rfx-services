@@ -1,0 +1,75 @@
+# -- DEV DOCKER-COMPOSE --
+# -- DO NOT USE IN PRODUCTION! --
+
+version: "3"
+services:
+
+
+  redis:
+    image: redis:4-alpine
+    ports:
+      - "16379:6379"
+    logging:
+      driver: "none"
+    networks:
+      - wikinet
+
+  db:
+    image: postgres:9-alpine
+    environment:
+      POSTGRES_DB: wiki
+      POSTGRES_PASSWORD: wikijs
+      POSTGRES_USER: wikijs
+    logging:
+      driver: "none"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - wikinet
+    ports:
+      - "15432:5432"
+
+  # db:
+  #     image: mongo:latest
+  #     environment:
+  #       - MONGO_DATA_DIR=/data/db
+  #       - MONGO_LOG_DIR=/tmp
+  #       - MONGODB_USER="wikijs" 
+  #       - MONGODB_PASS="wikijs"
+  #     volumes:
+  #       - db-data:/data/db
+  #     ports:
+  #         - 27017:27017
+  #     command: mongod --smallfiles --logpath=/dev/null # --quiet
+
+  wiki:
+    image: requarks/wiki:beta
+    depends_on:
+      - db
+      - redis
+    environment:
+      PORT: 3000 # DO NOT CHANGE THIS LINE! Use ports below to specify listening port.
+      DB_TYPE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: wikijs
+      DB_PASS: wikijs
+      DB_NAME: wiki
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      REDIS_PASS: ''
+    networks:
+      - wikinet
+    ports:
+      - "3000:3000" # <-- here you can replace with "80:3000" to listen on port 80 instead, as an example
+    volumes:
+      - ${abs_srcdir}/config.yml:/var/wiki/config.yml
+      # - /var/wiki/node_modules
+    # command: ["sh", "./dev/docker/init.sh"]
+
+networks:
+  wikinet:
+
+volumes:
+  db-data:
