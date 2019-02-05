@@ -96,9 +96,8 @@ reroute-clear: $(abs_top_srcdir)/services/service_reroute.sh
 
 
 ##
-## INSTALL
+## INSTALL TARGETS POLIMORPHISM
 ##
-
 
 INSTALL_TARGETS = install install-% $(install_service_DATA) $(install_store_DATA)
 
@@ -114,10 +113,8 @@ install_service_DATA = $(install_tmpdir)/$(notdir $(COMPOSER_FILE)) \
 
 install_store_DATA = 
 
-# nodist_install_service_DATA = $(COMPOSER_FILE)
-
 SERVICEdir = $(SERVICE_DIR)
-SOTREdir = $(STORE_DIR)
+SOTREdir   = $(STORE_DIR)
 
 install-data-hook: 
 	- systemctl link $(SERVICE_DIR)/$(SYSTEMD_SERVICE_FILE)
