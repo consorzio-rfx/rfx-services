@@ -1,4 +1,3 @@
-
 include $(top_srcdir)/Common.mk
 
 .PHONY: $(SERVICE_MODULES)
@@ -27,21 +26,27 @@ list:
 
 all: start
 
-## write enabled sevices in config file
-rfx-services.enabled:
-	@ echo $(SERVICE_MODULES) > $@;
 
-sysconf_DATA = $(builddir)/rfx-services.enabled
-
-## TODO: move this in confiugre
-libexecdir = $(datadir)/rfx-services/
+##     .####.##....##..######..########....###....##.......##......
+##     ..##..###...##.##....##....##......##.##...##.......##......
+##     ..##..####..##.##..........##.....##...##..##.......##......
+##     ..##..##.##.##..######.....##....##.....##.##.......##......
+##     ..##..##..####.......##....##....#########.##.......##......
+##     ..##..##...###.##....##....##....##.....##.##.......##......
+##     .####.##....##..######.....##....##.....##.########.########
 
 # $prefix/share/rfx-services
-libexec_SCRIPTS = $(srcdir)/service_reroute.sh
+service_rootdir = $(datadir)/rfx-services/
+service_root_SCRIPTS = $(srcdir)/service_reroute.sh \
+                       $(srcdir)/docker_utils.sh
 
 # $prefix/etc/init.d
-init_ddir = $(sysconfdir)/init.d
-init_d_SCRIPTS = $(builddir)/rfx-services.sh
+# init_ddir = $(sysconfdir)/init.d
+# init_d_SCRIPTS = $(builddir)/rfx-services.sh
 
-systemddir = $(sysconfdir)/systemd/system/
-systemd_DATA = $(builddir)/rfx-services.service
+# systemddir = $(sysconfdir)/systemd/system/
+# systemd_DATA = $(builddir)/rfx-services.service
+
+
+
+

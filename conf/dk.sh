@@ -19,7 +19,6 @@ Usage: $SCRIPTNAME [options] [commands]
        options
        -------
        -h|--help)         get this help
-       -C|--config)       set distribution config file
        -v|--verbose)      show script source script
 			 -c )               reserved for Makefile operations
 
@@ -38,12 +37,9 @@ while [[ "$1" == -* ]] ; do
 			shift
 			break
 			;;
-		-C|--config)
-		  CONFIG_FILE=$2
-			shift 2
-			;;
 	  -v|--verbose)
-		  set -o verbose
+			set -x
+			echo "VEROBOSE dk command: $@"
 			shift
 			;;
 		--)
@@ -56,15 +52,16 @@ while [[ "$1" == -* ]] ; do
 	esac
 done
 
+# if no DOCKER_CONTAINER revert to normal shell 
+# (this is needed for shell command within make for example,
+#  but those command are not executed in container though )
+[ ${DOCKER_CONTAINER} ] || { /bin/sh -c $@; exit; }
+
 if [ $# -lt 1 ] ; then
 	echo "Incorrect parameters. Use --help for usage instructions."
 	exit 1
 fi
 
-# evaluate config file
-#if [ -f ${CONFIG_FILE} ]; then
-# source ${CONFIG_FILE}
-#fi
 
 
 
@@ -82,13 +79,12 @@ get_md5_container() {
 DOCKER_BIN=${DOCKER_BIN:-docker}
 DOCKER_SCRIPTPATH=${DOCKER_SCRIPTPATH:-.docker-build}
 
-DOCKER_CONTAINER="$(echo -e "${DOCKER_CONTAINER}" | tr -d '[:space:]')"
-
 # append md5 to docker container
 DOCKER_CONTAINER_PREFIX=${DOCKER_CONTAINER}
 DOCKER_CONTAINER=$(get_md5_container ${DOCKER_CONTAINER}; echo $_ans)
 DOCKER_ENTRYPOINT=${DOCKER_ENTRYPOINT:-/bin/sh}
 DOCKER_SHELL=${DOCKER_SHELL:-/bin/sh}
+
 
 # CONSTRUCTED VARIABLES
 [ -t 7 -o -t 0 ] && INT=-ti || unset INT
@@ -97,10 +93,8 @@ user_id=$(id -u)
 user_group=$(id -g)
 user_home=${HOME}
 
-DOCKER_NETWORKS_VAR=""
-for i in ${DOCKER_NETWORKS}; do
-DOCKER_NETWORKS_VAR="${DOCKER_NETWORKS_VAR} --network $i"
-done
+
+
 
 ## ////////////////////////////////////////////////////////////////////////////////
 ## //  FUNCTIONS  /////////////////////////////////////////////////////////////////
@@ -120,8 +114,9 @@ DOCKER_IMAGE=${DOCKER_IMAGE}
 DOCKER_URL=${DOCKER_URL}
 DOCKER_DOCKERFILE=${DOCKER_DOCKERFILE}
 DOCKER_IMAGE_ID=$(dk_get_image_id ${DOCKER_IMAGE}; echo $_ans)
-DOCKER_NETWORKS="${DOCKER_NETWORKS}"
-user_login=${USER}
+DOCKER_NETWORKS=${DOCKER_NETWORKS}
+DOCKER_SHARES=${DOCKER_SHARES}
+USER=${USER}
 user_id=${user_id}
 user_group=${user_group}
 user_home=${user_home}
@@ -193,26 +188,35 @@ build() {
 	if [ -n "${DOCKER_DOCKERFILE}" ]; then
 	  DOCKER_BUILD_ARGS="${DOCKER_BUILD_ARGS} -f ${DOCKER_DOCKERFILE}"
 	fi
-	echo ${DOCKER_IMAGE}
 	echo docker build ${DOCKER_BUILD_ARGS} -t ${DOCKER_IMAGE} ${DOCKER_URL}
-	docker build \
-	  --build-arg DOCKER_IMAGE \
-		--build-arg USER \
-		--build-arg DISPLAY \
-		--build-arg LANG \
-		${DOCKER_BUILD_ARGS} -t ${DOCKER_IMAGE} ${DOCKER_URL}
+	docker build ${DOCKER_BUILD_ARGS} -t ${DOCKER_IMAGE} ${DOCKER_URL}
+}
+
+
+push() {	
+	dk_get_container_image ${DOCKER_CONTAINER}
+	if [ -n $_ans ]; then
+	  if [ ${DOCKER_REGISTRY} ]; then
+	    docker tag $_ans ${DOCKER_REGISTRY}/$_ans
+			docker push ${DOCKER_REGISTRY}/$_ans
+	  else
+			echo "pushing to: ${DOCKER_IMAGE}"
+			docker push $_ans
+		fi
+	fi
 }
 
 
 # START
 start() {
-	if [ -n ${DOCKER_URL} ]; then
+	if [ -n "${DOCKER_URL}" ]; then
+	  echo "BUILDING |${DOCKER_URL}|"
 		build
 	fi
   # find if container is is registered
   dk_get_container_id ${DOCKER_CONTAINER_ID}
 	if [ -z "${_ans}" ]; then
-	  log "Starting docker container from image"
+	  log "Starting docker container from image ${1:-${DOCKER_IMAGE}}"
   	docker run -d ${INT} --entrypoint=${DOCKER_ENTRYPOINT} \
   						 -e USER=${USER} \
   						 -e DISPLAY=${DISPLAY} \

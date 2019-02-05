@@ -14,13 +14,12 @@ services:
     links:
       - database
     volumes:
-      # - ${STORE_DIR}/html:/var/www/html
-        - ${abs_srcdir}/LocalSettings.php:/var/www/html/LocalSettings.php
-        - ${abs_srcdir}/my_wiki.db:/my_wiki.db
-        - ${abs_srcdir}/git-mediawiki:/git-mediawiki
-        - ${abs_builddir}/localhost:/localhost
+        - ${STORE_DIR}/html:/var/www/html
+        - ${SERVICE_DIR}/LocalSettings.php:/var/www/html/LocalSettings.php
+        - ${SERVICE_DIR}/my_wiki.db:/my_wiki.db
+        - ${SERVICE_DIR}/git-mediawiki:/git-mediawiki
     environment:
-      WG_SITENAME: "SitoCacca ${HOSTNAME}"
+      WG_SITENAME: "Wiki ${HOSTNAME}"
     deploy:
       replicas: 1
       placement:

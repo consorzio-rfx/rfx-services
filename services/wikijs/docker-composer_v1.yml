@@ -1,8 +1,4 @@
-
-
 version: '3'
-
-
 services:
 
   wikidb:
@@ -29,11 +25,7 @@ services:
     networks:
       - wikinet      
     volumes:
-      - ${abs_srcdir}/config_v1.yml:/var/wiki/config.yml
-    entrypoint: /bin/bash
-    tty: true
-    stdin_open: true
-
+      - ${SERVICE_DIR}/config_v1.yml:/var/wiki/config.yml
 
 
 

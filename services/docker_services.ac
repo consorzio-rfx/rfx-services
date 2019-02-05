@@ -17,3 +17,16 @@ AC_SUBST([SERVICE_MODULES])
 ##
 ## AX_KCONFIG_VAR_WITH([SMTP_SERVER_PORT],["set with SMTP_SERVER_PORT"])
 ## AC_SUBST([SMTP_SERVER_PORT])
+
+
+##
+## conditional with src build
+## TODO: move this in bootstrap
+##
+AS_VAR_SET([abs_srcdir],[$(cd ${srcdir}; pwd)])
+AS_VAR_SET([abs_builddir],[$(cd ${builddir}; pwd)])
+AM_CONDITIONAL([SRCDIR_BUILD],[test "x${abs_srcdir}" == "x${abs_builddir}"])
+AC_SUBST([SRCDIR_BUILD])
+
+
+

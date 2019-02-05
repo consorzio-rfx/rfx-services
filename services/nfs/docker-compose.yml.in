@@ -1,0 +1,55 @@
+# created $(date)
+version: "3"
+services:
+  nfs:
+    restart: always
+    # image: 'scality/nfsd:latest'
+    # image: 'apnar/nfs-ganesha'
+    image: 'janeczku/nfs-ganesha:latest'
+    ports:
+      ## 'janeczku/nfs-ganesha:latest'
+      - 111/tcp
+      - 111/udp
+      - 662
+      - 2049
+      - 38465
+      - 38466
+      - 38467
+
+      # - 564/tcp
+      # - 2049/tcp
+      # - 875/tcp
+      # - 875/udp
+    # environment:
+      # GANESHA_CONFIGFILE: /ganesha.conf
+      # GANESHA_EXPORT_ID: 1
+    #   REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+    #   REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+    #   REGISTRY_AUTH: htpasswd
+    #   REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+    #   REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+    volumes:
+      - nfs-data:/data/nfs
+      # - ${SERVICE_DIR}/ganesha.conf:/ganesha.conf
+    #   - ${STORE_DIR}/data:/var/lib/registry
+    #   - ${STORE_DIR}/certs:/certs
+    #   - ${STORE_DIR}/auth:/auth
+    networks:
+      - rfx-service
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+         - node.role == manager
+         - node.hostname == $(HOSTNAME)
+
+
+
+volumes:
+  nfs-data:
+
+networks:
+  rfx-service:
+    driver: overlay
+#    attachable: true
+

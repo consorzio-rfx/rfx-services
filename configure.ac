@@ -94,11 +94,13 @@ AC_CONFIG_FILES(
 				 services/Makefile
 				 services/rfx-services.sh
 				 services/rfx-services.service
-         services/btsync/Makefile
+         		 services/docker-registry/Makefile
+				 services/nfs/Makefile
+				 services/btsync/Makefile
+				 services/BVLC_caffe/Makefile
 				 services/gitlab/Makefile
 				 services/sharelatex/Makefile
 				 services/newaccount/Makefile
-				 services/interlock/Makefile
 				 services/tensorflow/Makefile
 				 services/spark/Makefile
 				 services/jenkins/Makefile
