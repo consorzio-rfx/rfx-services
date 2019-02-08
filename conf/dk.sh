@@ -63,8 +63,6 @@ if [ $# -lt 1 ] ; then
 fi
 
 
-
-
 ## ////////////////////////////////////////////////////////////////////////////////
 ## //  VARIABLES  /////////////////////////////////////////////////////////////////
 ## ////////////////////////////////////////////////////////////////////////////////
@@ -112,11 +110,12 @@ DOCKER_CONTAINER=${DOCKER_CONTAINER}
 DOCKER_CONTAINER_ID=$(dk_get_container_id ${DOCKER_CONTAINER}; echo $_ans)
 DOCKER_IMAGE=${DOCKER_IMAGE}
 DOCKER_URL=${DOCKER_URL}
+DOCKER_MACHINE=${DOCKER_MACHINE}
 DOCKER_DOCKERFILE=${DOCKER_DOCKERFILE}
 DOCKER_IMAGE_ID=$(dk_get_image_id ${DOCKER_IMAGE}; echo $_ans)
 DOCKER_NETWORKS=${DOCKER_NETWORKS}
 DOCKER_SHARES=${DOCKER_SHARES}
-USER=${USER}
+[ \${USER} ] || USER=${USER}
 user_id=${user_id}
 user_group=${user_group}
 user_home=${user_home}
@@ -321,6 +320,9 @@ shell() {
 
 # ALWAYS READ CONFIGURATION BACK (IF EXISTS)
 read_config
+
+# start machine env if exists
+[ ${DOCKER_MACHINE} ] && eval $(docker-machine env ${DOCKER_MACHINE})
 
 # MAIN [TO FIX]
 # if [ x$CMD = x"shell" ]; then

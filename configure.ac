@@ -95,6 +95,7 @@ AC_CONFIG_FILES(
 				 services/rfx-services.sh
 				 services/rfx-services.service
          		 services/docker-registry/Makefile
+				 services/rfx/Makefile
 				 services/nfs/Makefile
 				 services/btsync/Makefile
 				 services/BVLC_caffe/Makefile

@@ -113,8 +113,8 @@ install_service_DATA = $(install_tmpdir)/$(notdir $(COMPOSER_FILE)) \
 
 install_store_DATA = 
 
-SERVICEdir = $(SERVICE_DIR)
-SOTREdir   = $(STORE_DIR)
+SERVICEdir = $(install_servicedir)
+SOTREdir   = $(install_storedir)
 
 install-data-hook: 
 	- systemctl link $(SERVICE_DIR)/$(SYSTEMD_SERVICE_FILE)
@@ -170,6 +170,9 @@ all-am: Makefile $(DATA) $(COMPOSER_FILE)
 
 
 
+
+
+
 ##    .########..##....##....########....###....########...######...########.########
 ##    .##.....##.##...##........##......##.##...##.....##.##....##..##..........##...
 ##    .##.....##.##..##.........##.....##...##..##.....##.##........##..........##...
@@ -203,3 +206,64 @@ docker-:      ##@@docker_target advanced per target docker (any command passed t
 docker-%:
 	@ $(info [docker] $*)
 	@ . $(DSHELL) $*
+
+
+
+
+
+
+##    .########...#######..##.......##....##.##.....##..#######..########..########..##.....##
+##    .##.....##.##.....##.##........##..##..###...###.##.....##.##.....##.##.....##.##.....##
+##    .##.....##.##.....##.##.........####...####.####.##.....##.##.....##.##.....##.##.....##
+##    .########..##.....##.##..........##....##.###.##.##.....##.########..########..#########
+##    .##........##.....##.##..........##....##.....##.##.....##.##...##...##........##.....##
+##    .##........##.....##.##..........##....##.....##.##.....##.##....##..##........##.....##
+##    .##.........#######..########....##....##.....##..#######..##.....##.##........##.....##
+
+
+install-SERVICEDATA: 
+	@ $(MAKE) dk__$@
+
+dk__install-SERVICEDATA:
+	@$(NORMAL_INSTALL)
+	@list='$(SERVICE_DATA)'; test -n "$(SERVICEdir)" || list=; \
+	 if test -n "$$list"; then \
+	   echo " $(MKDIR_P) '$(DESTDIR)$(SERVICEdir)'"; \
+	   $(MKDIR_P) "$(DESTDIR)$(SERVICEdir)" || exit 1; \
+	 fi; \
+	 for p in $$list; do \	    
+	   if test -f "$$p"; then echo "$$p"; fi; \
+	   p="$(srcdir)/$$p"; \
+	   if test -f "$$p"; then echo "$$p"; fi; \
+	 done | $(am__base_list) | \
+	 while read files; do \
+	   echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(SERVICEdir)'"; \
+	   $(INSTALL_DATA) $$files "$(DESTDIR)$(SERVICEdir)" || exit $$?; \
+	 done; \
+	 for p in $$list; do \
+	   if test -d "$$p"; then echo "$$p"; fi; \
+	   p="$(srcdir)/$$p"; \
+	   if test -d "$$p"; then echo "$$p"; fi; \
+	 done | $(am__base_list) | \
+	 while read drs; do \
+	 	echo "copy directory: $$drs to $(DESTDIR)$(SERVICEdir)"; \
+	 	cp -a $$drs "$(DESTDIR)$(SERVICEdir)"; \
+	 done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

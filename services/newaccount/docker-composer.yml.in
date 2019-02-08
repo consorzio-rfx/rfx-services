@@ -1,5 +1,5 @@
 # created $(date)
-version: "3"
+version: "3.2"
 services:
   newaccount:
     hostname: localhost
@@ -11,7 +11,9 @@ services:
        - "reroute.ports=$(REROUTE_PORTS)"
     volumes:
        - "${SERVICE_DIR}/newaccount:/var/www/html"
-#       - "$(SERVICE_DIR)/tmp:/tmp"
+       - "nfs:/tmp/data"
+    networks:
+      - rfx_service
     deploy:
       replicas: 1
       placement:
@@ -19,5 +21,17 @@ services:
          - node.role == manager
          - node.hostname == $(HOSTNAME)
 
+
+volumes:
+  nfs:
+    driver_opts:
+      type: "nfs"
+      o: "addr=localhost,nolock,soft,rw"
+      device: ":/data/nfs"
+
+networks:
+  rfx_service:
+    driver: overlay
+    external: true
 
 
