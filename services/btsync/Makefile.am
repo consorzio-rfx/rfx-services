@@ -1,11 +1,9 @@
 include $(top_srcdir)/Common.mk
 include $(top_srcdir)/services/docker_services.mk
 
-
 ##
 ##  NOT WORKING YET
 ##
-
 COMPOSER_FILE = $(srcdir)/docker-compose.yml
 
 DOCKER_TARGETS = btsync-%

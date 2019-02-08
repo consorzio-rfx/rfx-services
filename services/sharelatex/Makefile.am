@@ -107,8 +107,8 @@ copy-service-data:
 install-data-local: ${SSLCERT_FILES} | $(LOCAL_DIRS)
 	@ $(MAKE) copy-service-data
 
-SERVICE_DATA = RFX_code.png
-
+SERVICE_DATA = RFX_publish.png \
+               $(SERVICE_DIR)/nginx-sharelatex.conf
 
 
 ## ////////////////////////////////////////////////////////////////////////////////
@@ -116,15 +116,16 @@ SERVICE_DATA = RFX_code.png
 ## ////////////////////////////////////////////////////////////////////////////////
 
 DOWNLOADS = sharelatex_docker_image sharelatex_src
-sharelatex_docker_image_URL = https://github.com/andrearigoni/sharelatex-docker-image.git
+sharelatex_docker_image_URL    = https://github.com/andrearigoni/sharelatex-docker-image.git
 sharelatex_docker_image_BRANCH = master
-sharelatex_src_URL = https://github.com/andrearigoni/sharelatex.git
+sharelatex_src_URL     = https://github.com/andrearigoni/sharelatex.git
 sharelatex_src_BRANCH = master
 
 sl-docker: ##@sharelatex build docker image
 sl-docker: export SHARELATEX_TAG=$(SHARELATEX_DOCKER_IMAGE)
 sl-docker: sharelatex_docker_image
-	@ $(MAKE) -C sharelatex_docker_image
+	@ $(MAKE) -C sharelatex_docker_image build-base; \
+        $(MAKE) -C sharelatex_docker_image build-community;
 
 sl-build: ##@sharelatex build local sharelatex sources
 sl-build: sharelatex_src

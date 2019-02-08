@@ -6,6 +6,7 @@ current_dir = $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
 dk__SWARM_NAME    = $(or $(SWARM_NAME),$(current_dir))
 dk__SERVICE       = $(or $(SERVICE),$(current_dir))
+
 SERVICE          ?= $(current_dir)
 SWARM_NAME       ?= $(current_dir)
 SERVICE_NAME     ?= $(SWARM_NAME)_$(SERVICE)
@@ -125,11 +126,8 @@ install-data-hook:
 export datadir
 export sysconfdir
 
-##
-## TODO: add \$ parsing on top of $() clause
-##
-__ax_pl_envsubst  ?= $(PERL) -pe 's/([^\\]|^)\$$\{([a-zA-Z_][a-zA-Z_0-9]*)\}/$$1.$$ENV{$$2}/eg' < $1 > $2
-__ax_pl_envsubst2 ?= $(PERL) -pe 's/([^\\]|^)\$$\(([a-zA-Z_][a-zA-Z_0-9]*)\)/$$1.$$ENV{$$2}/eg' < $1 > $2
+__ax_pl_envsubst  ?= $(PERL) -pe 's/([^\\]|^)\$$\{([a-zA-Z_][a-zA-Z_0-9]*)\}/$$1.$$ENV{$$2}/eg;s/\\\$$/\$$/g;' < $1 > $2
+__ax_pl_envsubst2 ?= $(PERL) -pe 's/([^\\]|^)\$$\(([a-zA-Z_][a-zA-Z_0-9]*)\)/$$1.$$ENV{$$2}/eg;s/\\\$$/\$$/g;' < $1 > $2
 
 export SERVICE_CONFIG_FILE   = $(dk__SERVICE).conf
 export SYSTEMD_SERVICE_FILE  = rfx-$(dk__SERVICE).service

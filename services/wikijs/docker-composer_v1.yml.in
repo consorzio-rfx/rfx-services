@@ -20,6 +20,9 @@ services:
       - wikidb
     ports:
       - '3000:3000'
+    labels:
+      - "reroute.ip=$(REROUTE_IP)"
+      - "reroute.ports=$(REROUTE_PORTS)"
     environment:
       WIKI_ADMIN_EMAIL: andrea.rigoni@igi.cnr.it
     networks:

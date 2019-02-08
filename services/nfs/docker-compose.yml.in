@@ -3,17 +3,14 @@ version: "3.2"
 services:
   nfs:
     restart: always
-    # image: 'scality/nfsd:latest'
-    # image: 'apnar/nfs-ganesha'
     # image: 'janeczku/nfs-ganesha:latest'
-    image: 'mitcdh/nfs-ganesha:latest'
+    image: 'apnar/nfs-ganesha:latest'
     ports:
       ## 'janeczku/nfs-ganesha:latest'
       - 111:111
       - 662:662
       - 2049:2049
       - 3865-3867:3865-3867
-
     privileged: true
 
       # - 564/tcp
@@ -21,11 +18,14 @@ services:
       # - 875/tcp
       # - 875/udp
     environment:
-      GANESHA_CONFIGFILE: /ganesha2.conf
+      GANESHA_CONFIGFILE: 
       GANESHA_EXPORT_ID:
       GANESHA_EXPORT:
-
-
+      GANESHA_PSEUDO_PATH:
+      GANESHA_NFS_PROTOCOLS:
+      GANESHA_TRANSPORTS:
+      GANESHA_ACCESS:
+      GANESHA_ROOT_ACCESS:
 
     volumes:
       - ${STORE_DIR}/data:/data/nfs

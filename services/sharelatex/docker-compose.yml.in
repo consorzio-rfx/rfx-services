@@ -23,6 +23,7 @@ services:
             - ${STORE_DIR}/sharelatex_texlive:/usr/local/texlive
             - ${STORE_DIR}/sharelatex_web:/var/www/sharelatex/web
             - ${STORE_DIR}/sharelatex_templates:/var/www/sharelatex/web/app/templates
+            - ${SERVICE_DIR}/nginx-sharelatex.conf:/etc/nginx/sites-enabled/sharelatex.conf
             - /var/run/docker.sock:/var/run/docker.sock
             - ${STORE_DIR}/sharelatex_logs:/var/log
             - ${SERVICE_DIR}/RFX_publish.png:/var/www/sharelatex/web/public/img/RFX_publish.png

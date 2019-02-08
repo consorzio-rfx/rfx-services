@@ -40,12 +40,6 @@ service_rootdir = $(datadir)/rfx-services/
 service_root_SCRIPTS = $(srcdir)/service_reroute.sh \
                        $(srcdir)/docker_utils.sh
 
-# $prefix/etc/init.d
-# init_ddir = $(sysconfdir)/init.d
-# init_d_SCRIPTS = $(builddir)/rfx-services.sh
-
-# systemddir = $(sysconfdir)/systemd/system/
-# systemd_DATA = $(builddir)/rfx-services.service
 
 
 

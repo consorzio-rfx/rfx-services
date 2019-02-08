@@ -1,14 +1,29 @@
 include $(top_srcdir)/Common.mk
 include $(top_srcdir)/services/docker_services.mk
 
+##    .##....##..#######..########....##......##..#######..########..##....##.####.##....##..######..
+##    .###...##.##.....##....##.......##..##..##.##.....##.##.....##.##...##...##..###...##.##....##.
+##    .####..##.##.....##....##.......##..##..##.##.....##.##.....##.##..##....##..####..##.##.......
+##    .##.##.##.##.....##....##.......##..##..##.##.....##.########..#####.....##..##.##.##.##...####
+##    .##..####.##.....##....##.......##..##..##.##.....##.##...##...##..##....##..##..####.##....##.
+##    .##...###.##.....##....##.......##..##..##.##.....##.##....##..##...##...##..##...###.##....##.
+##    .##....##..#######.....##........###..###...#######..##.....##.##....##.####.##....##..######..
+
+
 COMPOSER_FILE = docker-compose.yml
 
 start-local: | $(STORE_DIR)/data
 stop-local:
 
-export GANESHA_EXPORT_ID = 0
-export GANESHA_EXPORT = /export
+export GANESHA_CONFIGFILE = /ganesha.conf
+export GANESHA_EXPORT_ID = 77
+export GANESHA_EXPORT = /data/nfs
 export GANESHA_PSEUDO_PATH = /
+export GANESHA_NFS_PROTOCOLS = 4
+export GANESHA_TRANSPORTS = TCP
+
+export GANESHA_ACCESS = *
+export GANESHA_ROOT_ACCESS = *
 
 # GANESHA_LOGFILE: log file location
 # GANESHA_CONFIGFILE: location of ganesha.conf

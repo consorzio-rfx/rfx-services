@@ -1,8 +1,9 @@
 [Unit]
 Description=docker rfx-service: $(SERVICE)
 After=docker.service docker.socket systemd-networkd-wait-online.service
-Requires=network.target
-PartOf=network.target
+# Requires=network.target
+# PartOf=network.target
+BindsTo=network.target
 
 [Service]
 Type=oneshot
