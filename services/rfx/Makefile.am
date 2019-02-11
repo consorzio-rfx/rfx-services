@@ -28,12 +28,17 @@ networks.yml: networks.yml.in
 
 DOCKER_MACHINES = dev1
 
+$(DOCKER_MACHINES):
+	@ $(MAKE) .docker-build/$@-env.sh MACHINE_NAME=$@
+
+
 etargets = ls bash
 DOCKER_TARGETS = $(etargets)
 $(etargets): DOCKER_CONTAINER = etargets
 $(etargets): DOCKER_IMAGE = rigoni/linux-socdev:latest
 $(etargets): DOCKER_MACHINE = dev1
-$(etargets):
+$(etargets): dev1
 	@$@
+
 
 

@@ -33,10 +33,13 @@ docker-machine-create: ##@@docker get machine env
 
 docker-machine-%: DOCKER_MACHINE_DRIVER := $(or $($(MACHINE_NAME)_DRIVER),$(DOCKER_MACHINE_DRIVER),virtualbox)
 docker-machine-create:
-	docker-machine create --driver $(DOCKER_MACHINE_DRIVER) $(MACHINE_NAME)
+	docker-machine create --driver $(DOCKER_MACHINE_DRIVER) --swarm $(MACHINE_NAME)
 
 docker-machine-rm:
 	docker-machine rm $(MACHINE_NAME) && rm .docker-build/$(MACHINE_NAME)-env.sh
+
+.docker-build/$(MACHINE_NAME)-env.sh: | .docker-build
+	$(MAKE) docker-machine-create && docker-machine env $(MACHINE_NAME) > $@;
 
 # machine-mount: mount_dir ?= $(abs_builddir)
 # machine-mount:
@@ -51,17 +54,12 @@ docker-machine-%:
 	docker-machine $* $(MACHINE_NAME)
 
 
-
-
-
 machines:
 	$(foreach m,$(DOCKER_MACHINES), $(MAKE) .docker-build/$(m)-env.sh MACHINE_NAME=$(m);)
 
 machines-%:
 	$(foreach m,$(DOCKER_MACHINES), $(MAKE) docker-machine-$* MACHINE_NAME=$(m);)
 
-.docker-build/$(MACHINE_NAME)-env.sh: | .docker-build
-	$(MAKE) docker-machine-create && docker-machine env $(MACHINE_NAME) > $@;
 
 
 
