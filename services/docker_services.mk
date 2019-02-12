@@ -4,8 +4,9 @@ NODOCKERBUILD = %
 mkfile_path = $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir = $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
-dk__SWARM_NAME    = $(or $(SWARM_NAME),$(current_dir))
+dk__STACK_NAME    = $(or $(SWARM_NAME),$(current_dir))
 dk__SERVICE       = $(or $(SERVICE),$(current_dir))
+dk__VENDOR        = $(or $(VENDOR),rfx)
 
 SERVICE          ?= $(current_dir)
 SWARM_NAME       ?= $(current_dir)
@@ -44,13 +45,13 @@ swarm-leave:
 start: ##@docker_services stack deploy service
 start: | swarm-init start-local $(COMPOSER_FILE)
 	@ $(info stack deploy for service) \
-	  docker stack deploy -c $(COMPOSER_FILE) $(dk__SWARM_NAME); \
+	  docker stack deploy -c $(COMPOSER_FILE) $(dk__STACK_NAME); \
       $(MAKE) reroute
 
 stop: ##@docker_services remove service
 stop: | stop-local
 	@ $(info remove current service) \
-	  docker stack rm $(dk__SWARM_NAME); \
+	  docker stack rm $(dk__STACK_NAME); \
       $(MAKE) reroute-clear
 
 ps: ##@docker_services list services
@@ -69,14 +70,15 @@ shell:
 	  _id=`docker service ps $(SERVICE_NAME) -q`; \
 	  docker exec -ti $(SERVICE_NAME).$(or $(ID),1).$${_id} $(SHELL)
 
-#compose-up: ##@docker_composer local command up
-#compose-down: ##@docker_composer local command down
-#compose-up:
-#	@ docker-compose -f ${COMPOSER_FILE} up -d $(SERVICE)
-#compose-logs:
-#	@ docker-compose -f ${COMPOSER_FILE} logs -f $(SERVICE)
-#compose-down:
-#	@ docker-compose -f ${COMPOSER_FILE} down
+compose-up:   ##@@docker_composer local command up
+compose-down: ##@@docker_composer local command down
+compose-logs: ##@@docker_composer local command logs
+compose-up:
+	@ docker-compose -f ${COMPOSER_FILE} up -d $(SERVICE)
+compose-logs:
+	@ docker-compose -f ${COMPOSER_FILE} logs -f $(SERVICE)
+compose-down:
+	@ docker-compose -f ${COMPOSER_FILE} down
 
 portainer-init: ##@docker_services poirtainer init (browse localhost:9000 then)
 portainer-init:
@@ -103,8 +105,8 @@ reroute-clear: $(abs_top_srcdir)/services/service_reroute.sh
 INSTALL_TARGETS = install install-% $(install_service_DATA) $(install_store_DATA)
 
 servicedir = $(SERVICE_DIR)
-install_servicedir = $(or $(INSTALL_SERVICE_DIR),$(datadir)/rfx-services/$(dk__SERVICE))
-install_storedir   = $(or $(INSTALL_STORE_DIR),$(datadir)/rfx-services/$(dk__SERVICE))
+install_servicedir = $(or $(INSTALL_SERVICE_DIR),$(datadir)/$(dk__VENDOR)-services/$(dk__SERVICE))
+install_storedir   = $(or $(INSTALL_STORE_DIR),$(datadir)/$(dk__VENDOR)-services/$(dk__SERVICE))
 
 install_tmpdir = .install
 ak__DIRECTORIES += $(install_tmpdir)
@@ -118,7 +120,8 @@ SERVICEdir = $(install_servicedir)
 SOTREdir   = $(install_storedir)
 
 install-data-hook: 
-	- systemctl link $(SERVICE_DIR)/$(SYSTEMD_SERVICE_FILE)
+	- systemctl link -f $(SERVICE_DIR)/$(SYSTEMD_SERVICE_FILE); \
+	  systemctl daemon-reload
 
 ##
 ## TEMPLATES
@@ -130,7 +133,7 @@ __ax_pl_envsubst  ?= $(PERL) -pe 's/([^\\]|^)\$$\{([a-zA-Z_][a-zA-Z_0-9]*)\}/$$1
 __ax_pl_envsubst2 ?= $(PERL) -pe 's/([^\\]|^)\$$\(([a-zA-Z_][a-zA-Z_0-9]*)\)/$$1.$$ENV{$$2}/eg;s/\\\$$/\$$/g;' < $1 > $2
 
 export SERVICE_CONFIG_FILE   = $(dk__SERVICE).conf
-export SYSTEMD_SERVICE_FILE  = rfx-$(dk__SERVICE).service
+export SYSTEMD_SERVICE_FILE  = $(dk__VENDOR)-$(dk__SERVICE).service
 
 
 $(INSTALL_TARGETS): SERVICE_DIR   := $(install_servicedir)
@@ -229,7 +232,7 @@ dk__install-SERVICEDATA:
 	   echo " $(MKDIR_P) '$(DESTDIR)$(SERVICEdir)'"; \
 	   $(MKDIR_P) "$(DESTDIR)$(SERVICEdir)" || exit 1; \
 	 fi; \
-	 for p in $$list; do \	    
+	 for p in $$list; do \
 	   if test -f "$$p"; then echo "$$p"; fi; \
 	   p="$(srcdir)/$$p"; \
 	   if test -f "$$p"; then echo "$$p"; fi; \

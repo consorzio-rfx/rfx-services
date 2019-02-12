@@ -34,7 +34,7 @@ if SERVICE_GITLAB
 
   config GITLAB_DOCKER_IMAGE
 	 string  "Docker image"
-	 default "gitlab/gitlab-ce:latest"
+	 default "gitlab/gitlab-ce:11.7.5-ce.0"
 	 ---help---
         GiLab docker image to use, please note that this image will be lauched as
         a docker swarm service even if the composer that is provided here is meant
@@ -43,7 +43,7 @@ if SERVICE_GITLAB
 
   config GITLAB_COMPOSER_FILE
 	 string  "Docker composer file"
-	 default "\${abs_srcdir}/services/gitlab/docker-composer.yml"
+	 default "\${abs_srcdir}/services/gitlab/docker-compose.yml"
 	 ---help---
 	    GiLab docker composer file to use
 

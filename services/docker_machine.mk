@@ -29,11 +29,15 @@ export DOCKER_MACHINES
 ak__DIRECTORIES += .docker-build
 
 docker-machine-create: ##@@docker create a new machine
-docker-machine-create: ##@@docker get machine env
 
-docker-machine-%: DOCKER_MACHINE_DRIVER := $(or $($(MACHINE_NAME)_DRIVER),$(DOCKER_MACHINE_DRIVER),virtualbox)
+docker-machine-%: DOCKER_MACHINE_DRIVER      := $(or $($(MACHINE_NAME)_DRIVER),$(DOCKER_MACHINE_DRIVER),virtualbox)
+docker-machine-%: DOCKER_MACHINE_DRIVER_ARGS := $(or $($(MACHINE_NAME)_$(DOCKER_MACHINE_DRIVER)_ARGS),\
+													 $($(MACHINE_NAME)_DRIVER_ARGS),\
+												     $(DOCKER_MACHINE_DRIVER_ARGS))
 docker-machine-create:
-	docker-machine create --driver $(DOCKER_MACHINE_DRIVER) --swarm $(MACHINE_NAME)
+	docker-machine create --driver $(DOCKER_MACHINE_DRIVER) --swarm  \
+	$(if $($(MACHINE_NAME)_virtualbox_ISO), --virtualbox-boot2docker-url $($(MACHINE_NAME)_virtualbox_ISO)) \
+	$(MACHINE_NAME)
 
 docker-machine-rm:
 	docker-machine rm $(MACHINE_NAME) && rm .docker-build/$(MACHINE_NAME)-env.sh
@@ -50,9 +54,11 @@ docker-machine-rm:
 # machine-umount:
 # 	docker-machine mount -u $(MACHINE_NAME):$(mount_dir) $(mount_dir)
 
+
+
+
 docker-machine-%:
 	docker-machine $* $(MACHINE_NAME)
-
 
 machines:
 	$(foreach m,$(DOCKER_MACHINES), $(MAKE) .docker-build/$(m)-env.sh MACHINE_NAME=$(m);)

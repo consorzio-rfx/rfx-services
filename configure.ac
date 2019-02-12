@@ -92,8 +92,6 @@ AC_CONFIG_FILES(
                  Makefile
 				 .gitignore
 				 services/Makefile
-				 services/rfx-services.sh
-				 services/rfx-services.service
          		 services/docker-registry/Makefile
 				 services/rfx/Makefile
 				 services/nfs/Makefile
