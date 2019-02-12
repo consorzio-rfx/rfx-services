@@ -32,15 +32,11 @@ volumes:
 
 networks:
   service:
-    driver: overlay
-    attachable: true
-
-  # service_bridge:
-  #   driver: bridge
-  #   ipam:
-  #     driver: default
-  #     config:
-  #     -
-  #       subnet: 172.19.0.0/16
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 172.19.0.0/16
 
 

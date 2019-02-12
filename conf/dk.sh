@@ -52,15 +52,15 @@ while [[ "$1" == -* ]] ; do
 	esac
 done
 
-# if no DOCKER_CONTAINER revert to normal shell 
-# (this is needed for shell command within make for example,
-#  but those command are not executed in container though )
-[ ${DOCKER_CONTAINER} ] || { /bin/sh -c $@; exit; }
-
 if [ $# -lt 1 ] ; then
 	echo "Incorrect parameters. Use --help for usage instructions."
 	exit 1
 fi
+
+# if no DOCKER_CONTAINER revert to normal shell 
+# (this is needed for shell command within make for example,
+#  but those command are not executed in container though )
+[ ${DOCKER_CONTAINER} ] || { /bin/sh -c $@; exit; }
 
 
 ## ////////////////////////////////////////////////////////////////////////////////
@@ -93,11 +93,13 @@ user_home=${HOME}
 
 
 
-
-## ////////////////////////////////////////////////////////////////////////////////
-## //  FUNCTIONS  /////////////////////////////////////////////////////////////////
-## ////////////////////////////////////////////////////////////////////////////////
-
+##   ..######...#######..##....##.########....###....####.##....##.########.########.
+##   .##....##.##.....##.###...##....##......##.##....##..###...##.##.......##.....##
+##   .##.......##.....##.####..##....##.....##...##...##..####..##.##.......##.....##
+##   .##.......##.....##.##.##.##....##....##.....##..##..##.##.##.######...########.
+##   .##.......##.....##.##..####....##....#########..##..##..####.##.......##...##..
+##   .##....##.##.....##.##...###....##....##.....##..##..##...###.##.......##....##.
+##   ..######...#######..##....##....##....##.....##.####.##....##.########.##.....##
 
 write_config() {
   file_name=${DOCKER_SCRIPTPATH}/${DOCKER_CONTAINER_PREFIX}.sh
@@ -314,6 +316,129 @@ shell() {
 }
 
 
+
+
+##    .##.....##....###.....######..##.....##.####.##....##.########
+##    .###...###...##.##...##....##.##.....##..##..###...##.##......
+##    .####.####..##...##..##.......##.....##..##..####..##.##......
+##    .##.###.##.##.....##.##.......#########..##..##.##.##.######..
+##    .##.....##.#########.##.......##.....##..##..##..####.##......
+##    .##.....##.##.....##.##....##.##.....##..##..##...###.##......
+##    .##.....##.##.....##..######..##.....##.####.##....##.########
+
+## ENV
+## NEEDS: abs_top_builddir abs_top_srcdir
+: ${abs_top_srcdir:? "error abs_top_srcdir not defined"}
+: ${abs_top_builddir:? "error abs_top_builddir not defined"}
+: ${DOCKER_MACHINE_SORAGE_PATH=${abs_top_builddir}/conf/.docker}
+
+clean_dir () {
+	cd $1 && pwd
+}
+
+abs_top_srcdir=$(clean_dir ${abs_top_srcdir})
+abs_top_builddir=$(clean_dir ${abs_top_builddir})
+
+machine () {
+	docker-machine -s ${DOCKER_MACHINE_SORAGE_PATH} $@
+}
+
+machine-ssh() {
+	machine ssh ${MACHINE_NAME} $@
+}
+
+machine-status () {	
+	machine ls -f '{{.State}}' --filter name=${MACHINE_NAME}
+}
+
+# machine-create: ##@docker_machine create new machine
+machine-create() {    
+    local _driver=${DOCKER_MACHINE_DRIVER:-virtualbox}
+    local _swarm_token=$(docker swarm join-token worker -q 2>/dev/null)
+    local _swarm=${_swarm_token:+ --swarm}
+    
+    local _driver_args="--driver $_driver"
+    if [ $_driver = "virtualbox" ]; then
+				local _iso=${DOCKER_MACHINE_ISO}
+        [ $_iso ] && _driver_args="$_driver_args --virtualbox-boot2docker-url $_iso"
+    fi
+
+    # create storage path
+    if [ ! -d ${DOCKER_MACHINE_SORAGE_PATH} ]; then
+        mkdir -p ${DOCKER_MACHINE_SORAGE_PATH};
+    fi
+
+		if [ ! "$(machine-status)" = "Running" ]; then
+    	machine create $_driver_args ${DOCKER_MACHINE_ARGS} $_swarm ${MACHINE_NAME}
+		fi
+}
+
+
+machine-rm() {
+	${MACHINE_NAME:? "error no MACHINE_NAME defined"}
+	machine rm ${MACHINE_NAME}
+}
+
+machine-mount() {
+    test "$(machine-status)" = "Running" && _machine=${MACHINE_NAME}
+		: ${_machine:? "any configured machine could be found"}
+
+    _ip=$(machine inspect -f '{{.Driver.IPAddress}}' $_machine)
+    _port=$(machine inspect -f '{{.Driver.SSHPort}}' $_machine)
+    _user=$(machine inspect -f '{{.Driver.SSHUser}}' $_machine)
+    _key=$(machine inspect -f '{{.Driver.SSHKeyPath}}' $_machine)
+
+		# reverse_mount () {
+		# 	##
+		# 	## linux - how to mount local directory to remote like sshfs? - Super User 
+		# 	## https://superuser.com/questions/616182/how-to-mount-local-directory-to-remote-like-sshfs
+		# 	##		
+
+		# 	local _local_port="22"
+		# 	local _forward_port="10000" # work on this !!
+		# 	local _remote_port="xxx"
+
+		# 	local _local_ssh="-p $_forward_port ${USER}@$_local_addr"
+		# 	local _remote_ssh="-p $_remote_port ${USER}@$_remote_addr"
+		# 	local _sshfs_option="-o NoHostAuthenticationForLocalhost=yes"
+
+		# 	## options:
+		# 	##       -v Verbose 
+		# 	##       -X X11 forwarding
+		# 	##       -t pseudo-terminal for an interactive shell
+		# 	##
+		# 	#ssh -X -t $REMOTE_SSH -R $FORWARD_PORT:localhost:$LOCAL_PORT \
+		# 	#"source /etc/profile; mkdir -p $REMOTE_DIR; \
+		# 	# sshfs $SSHFS_OPTION $LOCAL_SSH:$LOCAL_DIR $REMOTE_DIR; bash; \			 
+		# 	# umount $REMOTE_DIR; rm -r $REMOTE_DIR"
+
+		# 	machine-ssh tce-load -w -i sshfs-fuse
+		# 	machine-ssh mkdir -p $1;
+		# 	sshfs $_sshfs_option 
+
+		#   # groupadd -g ${user_group} ${USER} 2>/dev/null; \
+		#   # useradd  -d ${user_home} -u ${user_id} -g ${user_group} ${USER} 2>/dev/null; \
+
+		# }
+
+    # mount() { sshfs -d $1 $_user@$_ip:/$1; }
+    # mount ${abs_top_srcdir}
+    # mount ${abs_top_builddir}
+		echo "This wont work unless reverse sshfs is performed"
+}   
+
+machine-ls() {
+	machine ls
+}
+
+
+machine-init() {
+	# set -e
+	machine-create && eval $(machine env ${DOCKER_MACHINE})
+
+}
+
+
 ## ////////////////////////////////////////////////////////////////////////////////
 ## //  MAIN  //////////////////////////////////////////////////////////////////////
 ## ////////////////////////////////////////////////////////////////////////////////
@@ -321,8 +446,6 @@ shell() {
 # ALWAYS READ CONFIGURATION BACK (IF EXISTS)
 read_config
 
-# start machine env if exists
-[ ${DOCKER_MACHINE} ] && eval $(docker-machine env ${DOCKER_MACHINE})
 
 # MAIN [TO FIX]
 # if [ x$CMD = x"shell" ]; then
@@ -333,12 +456,15 @@ read_config
 
 case ${CMD} in
 	shell)
+    # start machine env if exists
+    [ ${DOCKER_MACHINE} ] && machine-init
 		execute ${DOCKER_SHELL} -c "$@"
 		;;
 	*)
 		$@
 		;;
 esac
+
 
 
 

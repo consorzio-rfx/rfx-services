@@ -2,11 +2,11 @@
 version: "3.2"
 
 networks:
-  service:
-    driver: overlay
-    attachable: true
+  # service:
+  #   driver: overlay
+  #   attachable: true
 
-  service_bridge:
+  service:
     driver: bridge
     ipam:
       driver: default

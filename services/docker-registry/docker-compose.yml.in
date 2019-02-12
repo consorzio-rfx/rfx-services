@@ -29,7 +29,6 @@ services:
 networks:
   rfx-service:
     driver: overlay
-#    attachable: true
 
 volumes:
   docker-registry:

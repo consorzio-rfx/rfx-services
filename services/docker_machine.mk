@@ -1,70 +1,31 @@
 
 
 
-
-
-
-## VIRTAULBOX ##
-#  --virtualbox-boot2docker-url			VIRTUALBOX_BOOT2DOCKER_URL	Latest boot2docker url
-#  --virtualbox-cpu-count				VIRTUALBOX_CPU_COUNT	1
-#  --virtualbox-disk-size				VIRTUALBOX_DISK_SIZE	20000
-#  --virtualbox-host-dns-resolver		VIRTUALBOX_HOST_DNS_RESOLVER	false
-#  --virtualbox-hostonly-cidr			VIRTUALBOX_HOSTONLY_CIDR	192.168.99.1/24
-#  --virtualbox-hostonly-nicpromisc		VIRTUALBOX_HOSTONLY_NIC_PROMISC	deny
-#  --virtualbox-hostonly-nictype		VIRTUALBOX_HOSTONLY_NIC_TYPE	82540EM
-#  --virtualbox-hostonly-no-dhcp		VIRTUALBOX_HOSTONLY_NO_DHCP	false
-#  --virtualbox-import-boot2docker-vm	VIRTUALBOX_BOOT2DOCKER_IMPORT_VM	boot2docker-vm
-#  --virtualbox-memory					VIRTUALBOX_MEMORY_SIZE	1024
-#  --virtualbox-nat-nictype				VIRTUALBOX_NAT_NICTYPE	82540EM
-#  --virtualbox-no-dns-proxy			VIRTUALBOX_NO_DNS_PROXY	false
-#  --virtualbox-no-share				VIRTUALBOX_NO_SHARE	false
-#  --virtualbox-no-vtx-check			VIRTUALBOX_NO_VTX_CHECK	false
-#  --virtualbox-share-folder			VIRTUALBOX_SHARE_FOLDER	-
-#  --virtualbox-ui-type					VIRTUALBOX_UI_TYPE	headless
-
-
+export MACHINE_NAME
 export DOCKER_MACHINE
-export DOCKER_MACHINES
+export abs_top_srcdir
+export abs_top_builddir
 
-ak__DIRECTORIES += .docker-build
-
-docker-machine-create: ##@@docker create a new machine
-
-docker-machine-%: DOCKER_MACHINE_DRIVER      := $(or $($(MACHINE_NAME)_DRIVER),$(DOCKER_MACHINE_DRIVER),virtualbox)
-docker-machine-%: DOCKER_MACHINE_DRIVER_ARGS := $(or $($(MACHINE_NAME)_$(DOCKER_MACHINE_DRIVER)_ARGS),\
-													 $($(MACHINE_NAME)_DRIVER_ARGS),\
-												     $(DOCKER_MACHINE_DRIVER_ARGS))
-docker-machine-create:
-	docker-machine create --driver $(DOCKER_MACHINE_DRIVER) --swarm  \
-	$(if $($(MACHINE_NAME)_virtualbox_ISO), --virtualbox-boot2docker-url $($(MACHINE_NAME)_virtualbox_ISO)) \
-	$(MACHINE_NAME)
-
-docker-machine-rm:
-	docker-machine rm $(MACHINE_NAME) && rm .docker-build/$(MACHINE_NAME)-env.sh
-
-.docker-build/$(MACHINE_NAME)-env.sh: | .docker-build
-	$(MAKE) docker-machine-create && docker-machine env $(MACHINE_NAME) > $@;
-
-# machine-mount: mount_dir ?= $(abs_builddir)
-# machine-mount:
-# 	docker-machine ssh $(MACHINE_NAME) mkdir -p $(mount_dir); \
-# 	docker-machine mount $(mount_dir) $(MACHINE_NAME):$(mount_dir)
-
-# machine-umount: mount_dir ?= $(pwd)
-# machine-umount:
-# 	docker-machine mount -u $(MACHINE_NAME):$(mount_dir) $(mount_dir)
+export DOCKER_MACHINE_ISO
+export DOCKER_MACHINE_ARGS
+export DOCKER_MACHINE_SORAGE_PATH ?= $(abs_top_builddir)/conf/.docker
 
 
+DSHELL ?= $(top_srcdir)/conf/dk.sh ${DSHELL_ARGS}
+NODOCKERBUILD += ${DOCKER_MACHINES} #this is needed for build with docker
 
 
-docker-machine-%:
-	docker-machine $* $(MACHINE_NAME)
+$(DOCKER_MACHINES):
+	@ $(MAKE) machine-create MACHINE_NAME=$@
 
-machines:
-	$(foreach m,$(DOCKER_MACHINES), $(MAKE) .docker-build/$(m)-env.sh MACHINE_NAME=$(m);)
 
-machines-%:
-	$(foreach m,$(DOCKER_MACHINES), $(MAKE) docker-machine-$* MACHINE_NAME=$(m);)
+machine-%: DOCKER_CONTAINER = none
+machine-%: DOCKER_MACHINE_ARGS := $(or $($(MACHINE_NAME)_ARGS),$(DOCKER_MACHINE_ARGS))
+machine-%: DOCKER_MACHINE_ISO  := $(or $($(MACHINE_NAME)_ISO),$(DOCKER_MACHINE_ISO))
+machine-%: 
+	$(DSHELL) machine-$*
+
+
 
 
 
