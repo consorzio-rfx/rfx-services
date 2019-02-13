@@ -260,18 +260,20 @@ dk__install-SERVICEDATA:
 	   $(MKDIR_P) "$(DESTDIR)$(SERVICEdir)" || exit 1; \
 	 fi; \
 	 for p in $$list; do \
-	   if test -f "$$p"; then echo "$$p"; fi; \
-	   p="$(srcdir)/$$p"; \
-	   if test -f "$$p"; then echo "$$p"; fi; \
+	   if test -f "$$p"; then echo "$$p"; \
+	   else p="$(srcdir)/$$p"; \
+	    if test -f "$$p"; then echo "$$p"; fi; \
+	   fi; \
 	 done | $(am__base_list) | \
 	 while read files; do \
 	   echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(SERVICEdir)'"; \
 	   $(INSTALL_DATA) $$files "$(DESTDIR)$(SERVICEdir)" || exit $$?; \
 	 done; \
 	 for p in $$list; do \
-	   if test -d "$$p"; then echo "$$p"; fi; \
-	   p="$(srcdir)/$$p"; \
-	   if test -d "$$p"; then echo "$$p"; fi; \
+	   if test -d "$$p"; then echo "$$p"; \
+	   else p="$(srcdir)/$$p"; \
+	    if test -d "$$p"; then echo "$$p"; fi; \
+	   fi; \
 	 done | $(am__base_list) | \
 	 while read drs; do \
 	 	echo "copy directory: $$drs to $(DESTDIR)$(SERVICEdir)"; \
