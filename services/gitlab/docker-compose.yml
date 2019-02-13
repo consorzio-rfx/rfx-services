@@ -26,6 +26,7 @@ services:
        - "reroute.ports=${REROUTE_PORTS}"
     volumes:
       - "${STORE_DIR}/config:/etc/gitlab"
+      - "${SERVICE_DIR}/gitlab.rb:/etc/gitlab/gitlab.rb"
       - "${SSLCERT_FILE_CRT}:/etc/gitlab/ssl/ca.crt"
       - "${SSLCERT_FILE_KEY}:/etc/gitlab/ssl/ca.key"
       - "${STORE_DIR}/logs:/var/log/gitlab"

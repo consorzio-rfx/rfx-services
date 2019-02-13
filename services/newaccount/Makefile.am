@@ -2,7 +2,6 @@ include $(top_srcdir)/Common.mk
 include $(top_srcdir)/services/docker_services.mk
 
 
-
 ##    ..######..########.########..##.....##.####..######..########
 ##    .##....##.##.......##.....##.##.....##..##..##....##.##......
 ##    .##.......##.......##.....##.##.....##..##..##.......##......
@@ -39,8 +38,9 @@ image-init: DOCKER_URL = $(srcdir)
 image-init: 
 	@ :;
 
-image-push: DOCKER_REGISTRY = localhost:5000
+image-push: DOCKER_REGISTRY = $(DOCKER_REGISTRY_SERVER_HOST):$(DOCKER_REGISTRY_SERVER_PORT)
 image-push: image-init docker-push
+
 image-clean: docker-clean
 
 
@@ -50,7 +50,7 @@ clean-local: image-clean
 
 
 ## ALL
-all: image-push
+all: image-init
 
 
 

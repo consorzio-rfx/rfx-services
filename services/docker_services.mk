@@ -14,21 +14,48 @@ SERVICE_NAME     ?= $(SWARM_NAME)_$(SERVICE)
 
 SERVICE_DIR   = $(abs_srcdir)
 STORE_DIR     = $(abs_builddir)
+date          = $(shell date)
+
+export srcdir
+export builddir
+export top_srcdir
+export top_builddir
+export abs_top_srcdir
+export abs_top_builddir
 
 export  SWARM_NAME \
 		SERVICE \
 		SERVICE_NAME \
 		STORE_DIR \
 		SERVICE_DIR \
+		SERVICE_EXPORTS \
 		REROUTE_IP \
-        REROUTE_PORTS \
-        COMPOSER_FILE \
+    	REROUTE_PORTS \
+    	COMPOSER_FILE \
 		DOCKER_IMAGE \
 		date
 
-export SERVICE_EXPORTS
+## RFX SERVICES VARIABLES ##
+export SMTP_SERVER_HOST  \
+       SMTP_SERVER_PORT  \
+	   EMAIL_SMTP_SECURE \
+	   EMAIL_SMTP_USER   \
+	   EMAIL_SMTP_PASS   \
+	   EMAIL_SMTP_TLS_REJECT_UNAUTH \
+	   EMAIL_SMTP_TLS_REJECT_UNAUTH_TF \
+	   EMAIL_SMTP_IGNORE_TLS \
+	   EMAIL_SMTP_IGNORE_TLS_TF \
+			 email_notreply \
+			 email_administrator \
+			 ldap_host \
+			 ldap_port \
+			 ldap_usernameid \
+			 ldap_bind_dn \
+			 ldap_search_password \
+			 ldap_encription \
+			 ldap_base
 
-date           = $(shell date)
+
 
 .PHONY: swarm-init swarm-leave start stop ps logs shell
 
@@ -99,7 +126,7 @@ reroute-clear: $(abs_top_srcdir)/services/service_reroute.sh
 
 
 ##
-## INSTALL TARGETS POLIMORPHISM
+## INSTALL TARGETS
 ##
 
 INSTALL_TARGETS = install install-% $(install_service_DATA) $(install_store_DATA)
@@ -114,27 +141,26 @@ install_service_DATA = $(install_tmpdir)/$(notdir $(COMPOSER_FILE)) \
 					   $(install_tmpdir)/$(SERVICE_CONFIG_FILE) \
 					   $(install_tmpdir)/$(SYSTEMD_SERVICE_FILE)
 
-install_store_DATA = 
+install_store_DATA =
 
 SERVICEdir = $(install_servicedir)
 SOTREdir   = $(install_storedir)
 
-install-data-hook: 
+
+install-data-hook:
+	- $(MAKE) -C $(top_builddir)/services/ install SUBDIRS="" # install service utils
 	- systemctl link -f $(SERVICE_DIR)/$(SYSTEMD_SERVICE_FILE); \
 	  systemctl daemon-reload
 
 ##
 ## TEMPLATES
-## 
-export datadir
-export sysconfdir
+##
 
 __ax_pl_envsubst  ?= $(PERL) -pe 's/([^\\]|^)\$$\{([a-zA-Z_][a-zA-Z_0-9]*)\}/$$1.$$ENV{$$2}/eg;s/\\\$$/\$$/g;' < $1 > $2
 __ax_pl_envsubst2 ?= $(PERL) -pe 's/([^\\]|^)\$$\(([a-zA-Z_][a-zA-Z_0-9]*)\)/$$1.$$ENV{$$2}/eg;s/\\\$$/\$$/g;' < $1 > $2
 
 export SERVICE_CONFIG_FILE   = $(dk__SERVICE).conf
 export SYSTEMD_SERVICE_FILE  = $(dk__VENDOR)-$(dk__SERVICE).service
-
 
 $(INSTALL_TARGETS): SERVICE_DIR   := $(install_servicedir)
 $(INSTALL_TARGETS): STORE_DIR     := $(install_storedir)
@@ -145,8 +171,8 @@ $(install_tmpdir)/$(SERVICE_CONFIG_FILE): $(abs_top_srcdir)/services/service.con
 	@ $(call __ax_pl_envsubst2,$<,$@);
 
 $(install_tmpdir)/$(SYSTEMD_SERVICE_FILE): $(abs_top_srcdir)/services/systemd.service.template | $(install_tmpdir)
-	@ $(call __ax_pl_envsubst2,$<,$@); 
-	  
+	@ $(call __ax_pl_envsubst2,$<,$@);
+
 
 $(COMPOSER_FILE): $(wildcard $(srcdir)/$(COMPOSER_FILE).in)
 	@ $(if $<,$(call __ax_pl_envsubst2,$<,$@),$(error missing $(srcdir)/$(COMPOSER_FILE).in));
@@ -157,7 +183,8 @@ $(install_tmpdir)/$(notdir $(COMPOSER_FILE)): $(wildcard $(srcdir)/$(COMPOSER_FI
 MOSTLYCLEANFILES = $(install_service_DATA) $(install_store_DATA)
 
 ##
-## NOTE: this is the default but it seems that it must be redeclared to be written in the right order within the Makefile
+## NOTE: this was rewritte from Makefile and maches the default, but it seems that it must be redeclared to be written in
+##       the right order within the generated Makefile
 ##
 all-am: Makefile $(DATA) $(COMPOSER_FILE)
 
@@ -222,7 +249,7 @@ docker-%:
 ##    .##.........#######..########....##....##.....##..#######..##.....##.##........##.....##
 
 
-install-SERVICEDATA: 
+install-SERVICEDATA:
 	@ $(MAKE) dk__$@
 
 dk__install-SERVICEDATA:

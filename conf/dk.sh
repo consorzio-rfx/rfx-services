@@ -290,7 +290,6 @@ restart()  {
   docker restart ${DOCKER_CONTAINER}
 }
 
-
 execute()  {
   dk_get_status ${DOCKER_CONTAINER}
   [ $_ans = "running" ] || start ${DOCKER_IMAGE}
@@ -316,8 +315,6 @@ shell() {
 }
 
 
-
-
 ##    .##.....##....###.....######..##.....##.####.##....##.########
 ##    .###...###...##.##...##....##.##.....##..##..###...##.##......
 ##    .####.####..##...##..##.......##.....##..##..####..##.##......
@@ -336,23 +333,23 @@ clean_dir () {
 	cd $1 && pwd
 }
 
-abs_top_srcdir=$(clean_dir ${abs_top_srcdir})
-abs_top_builddir=$(clean_dir ${abs_top_builddir})
+abs_top_srcdir=$(clean_dir ${abs_top_srcdir}; )
+abs_top_builddir=$(clean_dir ${abs_top_builddir}; )
 
-machine () {
+machine() {
 	docker-machine -s ${DOCKER_MACHINE_SORAGE_PATH} $@
 }
 
-machine-ssh() {
+machine_ssh() {
 	machine ssh ${MACHINE_NAME} $@
 }
 
-machine-status () {	
+machine_status() {	
 	machine ls -f '{{.State}}' --filter name=${MACHINE_NAME}
 }
 
 # machine-create: ##@docker_machine create new machine
-machine-create() {    
+machine_create() {    
     local _driver=${DOCKER_MACHINE_DRIVER:-virtualbox}
     local _swarm_token=$(docker swarm join-token worker -q 2>/dev/null)
     local _swarm=${_swarm_token:+ --swarm}
@@ -374,12 +371,12 @@ machine-create() {
 }
 
 
-machine-rm() {
+machine_rm() {
 	${MACHINE_NAME:? "error no MACHINE_NAME defined"}
 	machine rm ${MACHINE_NAME}
 }
 
-machine-mount() {
+machine_mount() {
     test "$(machine-status)" = "Running" && _machine=${MACHINE_NAME}
 		: ${_machine:? "any configured machine could be found"}
 
@@ -427,12 +424,12 @@ machine-mount() {
 		echo "This wont work unless reverse sshfs is performed"
 }   
 
-machine-ls() {
+machine_ls() {
 	machine ls
 }
 
 
-machine-init() {
+machine_init() {
 	# set -e
 	machine-create && eval $(machine env ${DOCKER_MACHINE})
 
@@ -457,7 +454,7 @@ read_config
 case ${CMD} in
 	shell)
     # start machine env if exists
-    [ ${DOCKER_MACHINE} ] && machine-init
+    [ ${DOCKER_MACHINE} ] && machine_init
 		execute ${DOCKER_SHELL} -c "$@"
 		;;
 	*)

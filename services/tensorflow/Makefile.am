@@ -63,19 +63,6 @@ DIRECTORIES  = $(BAZEL_CACHEDIR)
 LOCAL_DIRS   = $(BAZEL_CACHEDIR)
 
 export BAZEL_CACHEDIR
-export DOCKER_CONTAINER
-export DOCKER_IMAGE
-export DOCKER_NETWORKS
-export DOCKER_URL
-export DOCKER_DOCKERFILE
-
-DSHELL = $(top_srcdir)/conf/dk.sh
-$(DOCKER_TARGETS): SHELL = $(DSHELL)
-
-docker-%:
-	@ $(info [docker] $*)
-	@ . $(DSHELL) $*
-
 
 DOWNLOADS = tensorflow
 tensorflow: ##@ext tensorflow
@@ -90,7 +77,6 @@ define _install_new_git =
  apt-get update; \
  apt install -y git wget;
 endef
-
 
 DOCKER_TARGETS = tf-%
 tf-%: DOCKER_CONTAINER = tf-build

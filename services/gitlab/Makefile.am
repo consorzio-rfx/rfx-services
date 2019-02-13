@@ -19,14 +19,20 @@ export HOSTNAME   \
        SSLCERT_FILE_CRT \
        SSLCERT_FILE_KEY
 
+export gitlab_email_from = donotreply@igi.cnr.it
+
 DIRS = ${STORE_DIR}/config \
-	   ${STORE_DIR}/logs   \
-	   ${STORE_DIR}/data  
+  	   ${STORE_DIR}/logs   \
+  	   ${STORE_DIR}/data  
 
 DIRECTORIES = $(DIRS)
 
 start-local: ${SSLCERT_FILE} | $(DIRS)
 stop-local:
+
+gitlab.rb: gitlab.rb.in
+	@ $(call __ax_pl_envsubst2,$<,$@);
+
 
 ## ////////////////////////////////////////////////////////////////////////////////
 ## //  CERT SSL  //////////////////////////////////////////////////////////////////
@@ -62,7 +68,8 @@ $(INSTALL_TARGETS): SSLCERT_FILE_KEY := $(SERVICE_DIR)/$(notdir $(SSLCERT_FILE_K
 
 SERVICE_DATA = $(DIRS) \
                $(SSLCERT_FILES) \
-               RFX_code.png
+               RFX_code.png \
+               gitlab.rb
 
 ## ////////////////////////////////////////////////////////////////////////////////
 ## //  CLEAN  /////////////////////////////////////////////////////////////////////

@@ -4,6 +4,9 @@
 
 comment "Docker Services"
 
+
+
+
 # menuconfig  ENABLE_DOCKER_SERVICES
 # 	 bool "Docker Services"
 # 	 default n
@@ -47,15 +50,104 @@ comment "Docker Services"
 # endif # ENABLE_DOCKER_SERVICES
 
 
-# menu CONFIG
-#
-#    config SMTP_SERVER_HOST
-#      string "SMTP_SERVER_HOST"
-#      default "rfxsmtp.igi.cnr.it"
-#
-#    config SMTP_SERVER_PORT
-#      string "SMTP_SERVER_PORT"
-#      default "25"
-#
-#
-# endmenu
+menu CONFIG_DOCKER_REGISTRY
+
+   config DOCKER_REGISTRY_SERVER_HOST
+     string "DOCKER_REGISTRY_SERVER_HOST"
+     default "localhost"
+
+   config DOCKER_REGISTRY_SERVER_PORT
+     string "DOCKER_REGISTRY_SERVER_PORT"
+     default "5000"
+
+endmenu
+
+menu CONFIG_SMTP_SERVICES
+
+   config SMTP_SERVER_HOST
+     string "SMTP_SERVER_HOST"
+     default "rfxsmtp.igi.cnr.it"
+
+   config SMTP_SERVER_PORT
+     string "SMTP_SERVER_PORT"
+     default "25"
+
+   config EMAIL_SMTP_SECURE
+     bool "SMTP_SECURE"
+     default true
+
+   config EMAIL_SMTP_USER
+     string "SMTP_USER"
+     depends on EMAIL_SMTP_SECURE
+     default ""
+
+   config EMAIL_SMTP_PASS
+     string "SMTP_PASS"
+     depends on EMAIL_SMTP_SECURE
+     default ""
+
+   config EMAIL_SMTP_TLS_REJECT_UNAUTH
+     bool "SMTP_TLS_REJECT_UNAUTH"
+     depends on EMAIL_SMTP_SECURE
+     default true
+
+   config EMAIL_SMTP_IGNORE_TLS
+     bool "SMTP_IGNORE_TLS"
+     depends on EMAIL_SMTP_SECURE
+     default false
+
+   config email_notreply
+     string "do not reply email"
+     default "donotreply@igi.cnr.it"
+
+   config email_administrator
+     string "administrator email"
+     default "webmaster@igi.cnr.it"
+
+   config EMAIL_CUSTOM_FOOTER
+     string "EMAIL_CUSTOM_FOOTER"
+     default "RFXcode group"
+
+endmenu
+
+
+menu CONFIG_LDAP_SERVICES
+   
+   config ldap_host
+     string "ldap hostname"
+     default "ntserv1.rfxoffline.local"
+
+   config ldap_port
+     string "ldap port"
+     default "389"
+
+   config ldap_usernameid
+     string "ldap usernameid"
+     default "sAMAccountName"
+
+   config ldap_bind_dn
+     string "ldap bind dn"
+     default "cn=ldapsearch,cn=Users,dc=rfxoffline,dc=local"
+
+   config ldap_search_password
+     string "ldap search password"
+     default "searchldap"
+
+   choice ldap_encription
+         prompt "ldap encription"
+         config start_tls
+          bool  "start_tls"
+         config simple_tls
+          bool  "simple_tls"
+         config plain
+          bool  "plain"
+   endchoice
+
+   config ldap_base
+     string "ldap base"
+     default "cn=Users,dc=rfxoffline,dc=local"
+
+
+
+
+endmenu

@@ -8,7 +8,7 @@ stop:    ##@services Stop all enabled services
 start stop:
 	@ $(info starting services ... "$(SERVICE_MODULES)") \
       for i in $(SERVICE_MODULES); do \
-       $(MAKE) -C $$i $@  \
+       $(MAKE) -C $$i $@; \
       done
 
 list: ##@services get a list of enabled services
@@ -16,8 +16,6 @@ list:
 	@ echo; \
       echo "Eanbled services: $(SERVICE_MODULES)"; \
       echo;
-
-all: start
 
 ##     .####.##....##..######..########....###....##.......##......
 ##     ..##..###...##.##....##....##......##.##...##.......##......

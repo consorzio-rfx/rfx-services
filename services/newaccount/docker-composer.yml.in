@@ -11,9 +11,6 @@ services:
        - "reroute.ports=$(REROUTE_PORTS)"
     volumes:
        - "${SERVICE_DIR}/newaccount:/var/www/html"
-       - "nfs:/tmp/data"
-    networks:
-      - rfx_service
     deploy:
       replicas: 1
       placement:
@@ -22,16 +19,16 @@ services:
          - node.hostname == $(HOSTNAME)
 
 
-volumes:
-  nfs:
-    driver_opts:
-      type: "nfs"
-      o: "addr=localhost,nolock,soft,rw"
-      device: ":/data/nfs"
-
-networks:
-  rfx_service:
-    driver: overlay
-    external: true
+# volumes:
+#   nfs:
+#     driver_opts:
+#       type: "nfs"
+#       o: "addr=localhost,nolock,soft,rw"
+#       device: ":/data/nfs"
+# 
+# networks:
+#   rfx_service:
+#     driver: overlay
+#     external: true
 
 

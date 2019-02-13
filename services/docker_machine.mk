@@ -3,8 +3,6 @@
 
 export MACHINE_NAME
 export DOCKER_MACHINE
-export abs_top_srcdir
-export abs_top_builddir
 
 export DOCKER_MACHINE_ISO
 export DOCKER_MACHINE_ARGS
@@ -23,7 +21,7 @@ machine-%: DOCKER_CONTAINER = none
 machine-%: DOCKER_MACHINE_ARGS := $(or $($(MACHINE_NAME)_ARGS),$(DOCKER_MACHINE_ARGS))
 machine-%: DOCKER_MACHINE_ISO  := $(or $($(MACHINE_NAME)_ISO),$(DOCKER_MACHINE_ISO))
 machine-%: 
-	$(DSHELL) machine-$*
+	$(DSHELL) machine_$*
 
 
 
