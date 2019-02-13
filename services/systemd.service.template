@@ -1,0 +1,16 @@
+[Unit]
+Description=docker rfx-service: $(SERVICE)
+After=docker.service docker.socket network-online.target
+Wants=network-online.target docker.service 
+WantedBy=rfx-services.target
+BindsTo=network-online.target rfx-services.target
+
+[Service]
+Type=oneshot
+ExecStart=$(datadir)/rfx-services/docker_utils.sh -v -c $(SERVICE_DIR)/$(SERVICE_CONFIG_FILE) start
+ExecStop=$(datadir)/rfx-services/docker_utils.sh -v -c $(SERVICE_DIR)/$(SERVICE_CONFIG_FILE) stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

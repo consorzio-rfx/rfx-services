@@ -1,10 +1,11 @@
 version: '3'
 services:
-    tensorflow:
-        image: '${DOCKER_IMAGE}'
+    BVLC_caffe:
+        image: ${DOCKER_IMAGE}
+        volumes:
+            - ${STORE_DIR}/notebooks:/notebooks
+        ports:
+            - 10010:10010
         deploy:
           replicas: 1
-        #volumes:
-          #- ${STORE_DIR}/notebooks:/notebooks
-        ports:
-            - 8888:8888
+        command: /bin/bash

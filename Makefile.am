@@ -24,7 +24,7 @@ ACLOCAL_AMFLAGS = -I conf/m4
 
 SUBDIRS = services
 
-all: ##@all all target
+all: ##@all all targets
 all:
 
 

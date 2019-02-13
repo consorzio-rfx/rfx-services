@@ -1,7 +1,7 @@
 version: '3'
 services:
     sharelatex:
-        image: '${SHARELATEX_DOCKER_IMAGE}'
+        image: '$(SHARELATEX_DOCKER_IMAGE)'
         container_name: sharelatex
         depends_on:
             - mongo
@@ -23,9 +23,10 @@ services:
             - ${STORE_DIR}/sharelatex_texlive:/usr/local/texlive
             - ${STORE_DIR}/sharelatex_web:/var/www/sharelatex/web
             - ${STORE_DIR}/sharelatex_templates:/var/www/sharelatex/web/app/templates
+            - ${SERVICE_DIR}/nginx-sharelatex.conf:/etc/nginx/sites-enabled/sharelatex.conf
             - /var/run/docker.sock:/var/run/docker.sock
             - ${STORE_DIR}/sharelatex_logs:/var/log
-            - ${abs_srcdir}/RFX_publish.png:/var/www/sharelatex/web/public/img/RFX_publish.png
+            - ${SERVICE_DIR}/RFX_publish.png:/var/www/sharelatex/web/public/img/RFX_publish.png
             - ${SSLCERT_FILE_CRT}:/etc/sharelatex/ssl/ca.crt
             - ${SSLCERT_FILE_KEY}:/etc/sharelatex/ssl/ca.key
             #- /var/clsi/compiles:/var/www/sharelatex/clsi/compiles
@@ -36,24 +37,24 @@ services:
             SHARELATEX_REDIS_HOST: redis
             SHARELATEX_APP_NAME: RFX ShareLaTeX
 
-            SHARELATEX_SITE_URL:
+            SHARELATEX_SITE_URL: '$(SHARELATEX_SITE_URL)'
             SHARELATEX_NAV_TITLE: RFX Collaborative publication portal
             SHARELATEX_HEADER_IMAGE_URL: /img/RFX_publish.png
             SHARELATEX_ADMIN_EMAIL: andrea.rigoni@igi.cnr.it or gianluca.moro@igi.cnr.it
             SHARELATEX_LEFT_FOOTER: '[{"text": "Powered by <a href=\"https://www.sharelatex.com\">ShareLaTeX</a>"}]'
             SHARELATEX_RIGHT_FOOTER: '[{"text": "RFX Collaborative publication portal"} ]'
 
-            SHARELATEX_EMAIL_FROM_ADDRESS:
+            SHARELATEX_EMAIL_FROM_ADDRESS: '$(email_administrator)'
             # SHARELATEX_EMAIL_AWS_SES_ACCESS_KEY_ID:
             # SHARELATEX_EMAIL_AWS_SES_SECRET_KEY:
-            SHARELATEX_EMAIL_SMTP_HOST:
-            SHARELATEX_EMAIL_SMTP_PORT:
-            SHARELATEX_EMAIL_SMTP_SECURE:
-            SHARELATEX_EMAIL_SMTP_USER:
-            SHARELATEX_EMAIL_SMTP_PASS:
-            SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH:
-            SHARELATEX_EMAIL_SMTP_IGNORE_TLS:
-            SHARELATEX_CUSTOM_EMAIL_FOOTER:
+            SHARELATEX_EMAIL_SMTP_HOST: '$(SMTP_SERVER_HOST)'
+            SHARELATEX_EMAIL_SMTP_PORT: '$(SMTP_SERVER_PORT)'
+            SHARELATEX_EMAIL_SMTP_SECURE: '$(EMAIL_SMTP_SECURE_TF)'
+            SHARELATEX_EMAIL_SMTP_USER: '$(EMAIL_SMTP_USER)'
+            SHARELATEX_EMAIL_SMTP_PASS: '$(EMAIL_SMTP_PASS)'
+            SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH: '$(EMAIL_SMTP_TLS_REJECT_UNAUTH_TF)'
+            SHARELATEX_EMAIL_SMTP_IGNORE_TLS: '$(EMAIL_SMTP_IGNORE_TLS_TF)'
+            SHARELATEX_CUSTOM_EMAIL_FOOTER: '$(CUSTOM_EMAIL_FOOTER)'
 
     mongo:
         image: mongo

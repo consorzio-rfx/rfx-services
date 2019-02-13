@@ -1,0 +1,58 @@
+# created $(date)
+version: "3.2"
+services:
+  nfs:
+    restart: always
+    # image: 'janeczku/nfs-ganesha:latest'
+    image: 'apnar/nfs-ganesha:latest'
+    ports:
+      ## 'janeczku/nfs-ganesha:latest'
+      - 111:111
+      - 662:662
+      - 2049:2049
+      - 3865-3867:3865-3867
+    privileged: true
+
+      # - 564/tcp
+      # - 2049/tcp
+      # - 875/tcp
+      # - 875/udp
+    environment:
+      GANESHA_CONFIGFILE: 
+      GANESHA_EXPORT_ID:
+      GANESHA_EXPORT:
+      GANESHA_PSEUDO_PATH:
+      GANESHA_NFS_PROTOCOLS:
+      GANESHA_TRANSPORTS:
+      GANESHA_ACCESS:
+      GANESHA_ROOT_ACCESS:
+
+    volumes:
+      - ${STORE_DIR}/data:/data/nfs
+#      - ${SERVICE_DIR}/start_nfs.sh:/opt/start_nfs.sh
+#      - ${SERVICE_DIR}/ganesha.conf:/ganesha.conf
+    # networks:
+    #   - rfx_service
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+         - node.role == manager
+         - node.hostname == $(HOSTNAME)
+
+
+# volumes:
+#   nfs-data:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       device: ${STORE_DIR}/data
+#       o: bind
+
+# networks:
+#   rfx_service:
+#     driver: overlay
+#     external: true
+
+
+

@@ -7,7 +7,6 @@
 
 SCRIPTNAME=$(basename "$0")
 SCRIPT_DIR=$(dirname "$0")
-CONFIG_FILE=
 
 print_help() {
 cat << EOF
@@ -28,31 +27,31 @@ EOF
 while [[ "$1" == -* ]] ; do
 	case "$1" in
 		-h|--help)
-			print_help
-			exit
-			;;
-        -v|--verbose)
-	        #set -ex -o verbose
-			set -ex
-			shift
-			;;
-        --debug)
-            set -ex
-            shift
-            ;;
-        -s|--service)
-            SERVICE_NAME=$2
-            shift 2
-            ;;
+			  print_help
+			  exit
+			  ;;
+    -v|--verbose)
+        #set -ex -o verbose
+        set -ex
+        shift
+        ;;
+    --debug)
+        set -ex
+        shift
+        ;;
+    -s|--service)
+        SERVICE_NAME=$2
+        shift 2
+        ;;
 		--)
-			shift
-			break
-			;;
+			  shift
+			  break
+			  ;;
 		*)
-            COMMAND=$1
-            shift
+        COMMAND=$1
+        shift
 		    break
-			;;
+			  ;;
 	esac
 done
 
@@ -60,9 +59,6 @@ if [ $# -lt 1 ] ; then
 	echo "Incorrect parameters. Use --help for usage instructions."
 fi
 
-# sudo ip addr add 127.0.0.2 dev lo label lo:2
-
-#SERVICE_NAME=mildsrv_web1
 IPT_CHAIN=${SERVICE_NAME}
 
 chain_remove () {
@@ -119,7 +115,7 @@ reroute_ports () {
     done
   }
 
-  chain_remove ${IPT_CHAIN}
+  chain_remove ${IPT_CHAIN} 2>/dev/null
   chain_init ${IPT_CHAIN}
   # LOOP PORTS
   for p in ${reroute_ports}; do
@@ -146,7 +142,7 @@ reroute_ports () {
 
 
 clear_ports () {
-  chain_remove ${IPT_CHAIN}
+  chain_remove ${IPT_CHAIN} 
 }
 
 

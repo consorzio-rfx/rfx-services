@@ -1,0 +1,34 @@
+# created $(date)
+version: "3"
+services:
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - $(DOCKER_REGISTRY_SERVER_PORT):5000
+    # environment:
+    #   REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+    #   REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+    #   REGISTRY_AUTH: htpasswd
+    #   REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+    #   REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+    volumes:
+      - docker-registry:/var/lib/registry
+    #   - ${STORE_DIR}/data:/var/lib/registry
+    #   - ${STORE_DIR}/certs:/certs
+    #   - ${STORE_DIR}/auth:/auth
+    networks:
+      - rfx-service
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+         - node.role == manager
+         - node.hostname == $(HOSTNAME)
+
+networks:
+  rfx-service:
+    driver: overlay
+
+volumes:
+  docker-registry:

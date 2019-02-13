@@ -1,7 +1,5 @@
 FROM nimmis/alpine-glibc
 
-MAINTAINER Andrea Rigoni <>
-
 RUN apk update && apk upgrade && \
     apk add bash curl && \
     cd /root && \

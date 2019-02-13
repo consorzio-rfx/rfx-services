@@ -1,8 +1,4 @@
-
-
 version: '3'
-
-
 services:
 
   wikidb:
@@ -24,16 +20,15 @@ services:
       - wikidb
     ports:
       - '3000:3000'
+    labels:
+      - "reroute.ip=$(REROUTE_IP)"
+      - "reroute.ports=$(REROUTE_PORTS)"
     environment:
       WIKI_ADMIN_EMAIL: andrea.rigoni@igi.cnr.it
     networks:
       - wikinet      
     volumes:
-      - ${abs_srcdir}/config_v1.yml:/var/wiki/config.yml
-    entrypoint: /bin/bash
-    tty: true
-    stdin_open: true
-
+      - ${SERVICE_DIR}/config_v1.yml:/var/wiki/config.yml
 
 
 
