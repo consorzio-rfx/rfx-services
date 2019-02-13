@@ -41,11 +41,11 @@ if SERVICE_GITLAB
         to be a single instance. For this reason a constanint has been added and
         the service will run inside the swam manager.
 
-  config GITLAB_COMPOSER_FILE
-	 string  "Docker composer file"
-	 default "\${abs_srcdir}/services/gitlab/docker-compose.yml"
-	 ---help---
-	    GiLab docker composer file to use
+#  config GITLAB_COMPOSER_FILE
+#	 string  "Docker composer file"
+#	 default "\${abs_srcdir}/services/gitlab/docker-compose.yml"
+#	 ---help---
+#	    GiLab docker composer file to use
 
   config GITLAB_EXTERNAL_URL
     string "external url"

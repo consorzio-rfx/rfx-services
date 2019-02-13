@@ -5,7 +5,7 @@ include $(top_srcdir)/services/docker_services.mk
 ## //  SERVICE  ///////////////////////////////////////////////////////////////////
 ## ////////////////////////////////////////////////////////////////////////////////
 
-COMPOSER_FILE = $(or $(GITLAB_COMPOSER_FILE),$(srcdir)/docker-compose.yml)
+COMPOSER_FILE = $(srcdir)/docker-compose.yml
 
 REROUTE_IP     = $(GITLAB_PUBLIC_IP)
 REROUTE_PORTS  = $(GITLAB_PUBLIC_PORTS)
