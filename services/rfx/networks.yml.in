@@ -1,0 +1,16 @@
+# created $(date)
+version: "3.2"
+
+networks:
+  # service:
+  #   driver: overlay
+  #   attachable: true
+
+  service:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 172.19.0.0/16
+

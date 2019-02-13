@@ -1,0 +1,34 @@
+# created $(date)
+version: "3.2"
+services:
+  newaccount:
+    hostname: localhost
+    image: consorziorfx/php-ldap:latest
+    ports:
+      - 80
+    labels:
+       - "reroute.ip=$(REROUTE_IP)"
+       - "reroute.ports=$(REROUTE_PORTS)"
+    volumes:
+       - "${SERVICE_DIR}/newaccount:/var/www/html"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+         - node.role == manager
+         - node.hostname == $(HOSTNAME)
+
+
+# volumes:
+#   nfs:
+#     driver_opts:
+#       type: "nfs"
+#       o: "addr=localhost,nolock,soft,rw"
+#       device: ":/data/nfs"
+# 
+# networks:
+#   rfx_service:
+#     driver: overlay
+#     external: true
+
+

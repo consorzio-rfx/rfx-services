@@ -12,8 +12,76 @@ AX_KCONFIG_MODULES([SERVICE],
 AC_SUBST([SERVICE_MODULES])
 
 
-## AX_KCONFIG_VAR_WITH([SMTP_SERVER_HOST],["set with SMTP_SERVER_HOST"])
-## AC_SUBST([SMTP_SERVER_HOST])
-##
-## AX_KCONFIG_VAR_WITH([SMTP_SERVER_PORT],["set with SMTP_SERVER_PORT"])
-## AC_SUBST([SMTP_SERVER_PORT])
+
+## RFX DOCKER REGISTRY
+
+AX_KCONFIG_VAR_WITH([DOCKER_REGISTRY_SERVER_HOST],["set with DOCKER_REGISTRY_SERVER_HOST"])
+AC_SUBST([DOCKER_REGISTRY_SERVER_HOST])
+
+AX_KCONFIG_VAR_WITH([DOCKER_REGISTRY_SERVER_PORT],["set with DOCKER_REGISTRY_SERVER_PORT"])
+AC_SUBST([DOCKER_REGISTRY_SERVER_PORT])
+
+
+## RFX SMTP
+
+AX_KCONFIG_VAR_WITH([SMTP_SERVER_HOST],["set with SMTP_SERVER_HOST"])
+AC_SUBST([SMTP_SERVER_HOST])
+
+AX_KCONFIG_VAR_WITH([SMTP_SERVER_PORT],["set with SMTP_SERVER_PORT"])
+AC_SUBST([SMTP_SERVER_PORT])
+
+AX_KCONFIG_VAR_ENABLE([EMAIL_SMTP_SECURE],["set with EMAIL_SMTP_SECURE"])
+AC_SUBST([EMAIL_SMTP_SECURE])
+AX_YN2TF([EMAIL_SMTP_SECURE])
+AC_SUBST([EMAIL_SMTP_SECURE_TF])
+
+AX_KCONFIG_VAR_WITH([EMAIL_SMTP_USER],["set with EMAIL_SMTP_USER"])
+AC_SUBST([EMAIL_SMTP_USER])
+
+AX_KCONFIG_VAR_WITH([EMAIL_SMTP_PASS],["set with EMAIL_SMTP_PASS"])
+AC_SUBST([EMAIL_SMTP_PASS])
+
+AX_KCONFIG_VAR_ENABLE([EMAIL_SMTP_TLS_REJECT_UNAUTH],["set with EMAIL_SMTP_TLS_REJECT_UNAUTH"])
+AC_SUBST([EMAIL_SMTP_TLS_REJECT_UNAUTH])
+AX_YN2TF([EMAIL_SMTP_TLS_REJECT_UNAUTH])
+AC_SUBST([EMAIL_SMTP_TLS_REJECT_UNAUTH_TF])
+
+AX_KCONFIG_VAR_ENABLE([EMAIL_SMTP_IGNORE_TLS],["set with EMAIL_SMTP_IGNORE_TLS"])
+AC_SUBST([EMAIL_SMTP_IGNORE_TLS])
+
+AX_YN2TF([EMAIL_SMTP_IGNORE_TLS])
+AC_SUBST([EMAIL_SMTP_IGNORE_TLS_TF])
+
+
+## RFX LDAP
+
+AX_KCONFIG_VAR_WITH([email_notreply],["set with email_notreply"])
+AC_SUBST([email_notreply])
+
+AX_KCONFIG_VAR_WITH([email_administrator],["set with email_administrator"])
+AC_SUBST([email_administrator])
+
+AX_KCONFIG_VAR_WITH([ldap_host],["set with ldap_host"])
+AC_SUBST([ldap_host])
+
+AX_KCONFIG_VAR_WITH([ldap_port],["set with ldap_port"])
+AC_SUBST([ldap_port])
+
+AX_KCONFIG_VAR_WITH([ldap_usernameid],["set with ldap_usernameid"])
+AC_SUBST([ldap_usernameid])
+
+AX_KCONFIG_VAR_WITH([ldap_bind_dn],["set with ldap_bind_dn"])
+AC_SUBST([ldap_bind_dn])
+
+AX_KCONFIG_VAR_WITH([ldap_search_password],["set with ldap_search_password"])
+AC_SUBST([ldap_search_password])
+
+AX_KCONFIG_CHOICE([ldap_encription],
+ [ldap_encription_start_tls],["start_tls"],
+ [ldap_encription_simple_tls],["simple_tls"],
+ [ldap_encription_plain],["plain"])
+
+AX_KCONFIG_VAR_WITH([ldap_base],["set with ldap_base"])
+AC_SUBST([ldap_base])
+
+

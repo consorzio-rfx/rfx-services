@@ -81,49 +81,5 @@ if  SERVICE_SHARELATEX
     depends on !SHARELATEX_SELFSIGNED_SSL
 
 
-comment "SHARELATEX MAIL OPTIONS"
-
-   config SHARELATEX_EMAIL_FROM_ADDRESS
-     string "FROM_ADDRESS"
-     default ""
-
-   config SHARELATEX_EMAIL_SMTP_HOST
-     string "SMTP_HOST"
-     default "localhost"
-
-   config SHARELATEX_EMAIL_SMTP_PORT
-     string "SMTP_PORT"
-     default "25"
-
-   config SHARELATEX_EMAIL_SMTP_SECURE
-     bool "SMTP_SECURE"
-     default true
-
-   config SHARELATEX_EMAIL_SMTP_USER
-     string "SMTP_USER"
-     depends on SHARELATEX_EMAIL_SMTP_SECURE
-     default ""
-
-   config SHARELATEX_EMAIL_SMTP_PASS
-     string "SMTP_PASS"
-     depends on SHARELATEX_EMAIL_SMTP_SECURE
-     default ""
-
-   config SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH
-     bool "SMTP_TLS_REJECT_UNAUTH"
-     depends on SHARELATEX_EMAIL_SMTP_SECURE
-     default true
-
-   config SHARELATEX_EMAIL_SMTP_IGNORE_TLS
-     bool "SMTP_IGNORE_TLS"
-     depends on SHARELATEX_EMAIL_SMTP_SECURE
-     default false
-
-   config SHARELATEX_CUSTOM_EMAIL_FOOTER
-     string "CUSTOM_EMAIL_FOOTER"
-     default ""
-
-
-
 endif #      SERVICE_SHARELATEX
 

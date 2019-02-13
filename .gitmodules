@@ -1,6 +1,3 @@
-[submodule "linux-xlnx"]
-	path = linux-xlnx
-	url = https://github.com/Xilinx/linux-xlnx.git
 [submodule "conf/kconfig"]
 	path = conf/kconfig
 	url = https://github.com/andrearigoni/autoconf-kconfig.git
@@ -10,6 +7,3 @@
 [submodule "services/newaccount/newaccount"]
 	path = services/newaccount/newaccount
 	url = https://github.com/consorzio-rfx/newaccount.git
-[submodule "services/mediawiki/git-mediawiki"]
-	path = services/mediawiki/git-mediawiki
-	url = https://github.com/andrearigoni/git-mediawiki.git

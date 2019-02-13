@@ -42,7 +42,7 @@ services:
   #         - 27017:27017
   #     command: mongod --smallfiles --logpath=/dev/null # --quiet
 
-  wiki:
+  wikijs:
     image: requarks/wiki:beta
     depends_on:
       - db
@@ -64,7 +64,7 @@ services:
     ports:
       - "3000:3000" # <-- here you can replace with "80:3000" to listen on port 80 instead, as an example
     volumes:
-      - ${abs_srcdir}/config.yml:/var/wiki/config.yml
+      - ${SERVICE_DIR}/config.yml:/wiki/config.yml
       # - /var/wiki/node_modules
     # command: ["sh", "./dev/docker/init.sh"]
 
