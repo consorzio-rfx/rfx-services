@@ -131,7 +131,7 @@ reroute-clear: $(abs_top_srcdir)/services/service_reroute.sh
 
 INSTALL_TARGETS = install install-% $(install_service_DATA) $(install_store_DATA)
 
-servicedir = $(SERVICE_DIR)
+export datadir
 install_servicedir = $(or $(INSTALL_SERVICE_DIR),$(datadir)/$(dk__VENDOR)-services/$(dk__SERVICE))
 install_storedir   = $(or $(INSTALL_STORE_DIR),$(datadir)/$(dk__VENDOR)-services/$(dk__SERVICE))
 
