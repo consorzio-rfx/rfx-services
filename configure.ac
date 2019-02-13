@@ -98,6 +98,7 @@ AC_CONFIG_FILES(
 				 services/gitlab/Makefile
 				 services/sharelatex/Makefile
 				 services/newaccount/Makefile
+				 services/publications/Makefile
 				 services/interlock/Makefile
 				 services/tensorflow/Makefile
 				 services/spark/Makefile

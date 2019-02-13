@@ -23,6 +23,10 @@ comment "Docker Services"
     bool "NEWACCOUNT sevice"
     default y
 
+  config SERVICE_PUBLICATIONS
+    bool "PUBLICATIONS sevice"
+    default y
+
   config SERVICE_JENKINS
     bool "JENKINS sevice"
     default n
