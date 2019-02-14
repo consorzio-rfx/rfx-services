@@ -105,5 +105,6 @@ AC_CONFIG_FILES(
 				 services/jenkins/Makefile
 				 services/mediawiki/Makefile
 				 services/wikijs/Makefile
+				 services/spider_wiki/Makefile
                )
 AC_OUTPUT
