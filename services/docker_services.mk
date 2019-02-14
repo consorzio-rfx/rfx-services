@@ -4,13 +4,10 @@ NODOCKERBUILD = %
 mkfile_path = $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir = $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
-dk__STACK_NAME    = $(or $(SWARM_NAME),$(current_dir))
-dk__SERVICE       = $(or $(SERVICE),$(current_dir))
-dk__VENDOR        = $(or $(VENDOR),rfx)
-
-SERVICE          ?= $(current_dir)
-SWARM_NAME       ?= $(current_dir)
-SERVICE_NAME     ?= $(SWARM_NAME)_$(SERVICE)
+VENDOR        ::= $(or $(VENDOR),rfx)
+SERVICE       ::= $(or $(SERVICE),$(current_dir))
+SWARM_NAME    ::= $(or $(SWARM_NAME),$(current_dir))
+SERVICE_NAME  ::= $(or $(SERVICE_NAME),$(SWARM_NAME)_$(SERVICE))
 
 SERVICE_DIR   = $(abs_srcdir)
 STORE_DIR     = $(abs_builddir)
@@ -72,13 +69,13 @@ swarm-leave:
 start: ##@docker_services stack deploy service
 start: | swarm-init start-local $(COMPOSER_FILE)
 	@ $(info stack deploy for service) \
-	  docker stack deploy -c $(COMPOSER_FILE) $(dk__STACK_NAME); \
+	  docker stack deploy -c $(COMPOSER_FILE) $(SWARM_NAME); \
       $(MAKE) reroute
 
 stop: ##@docker_services remove service
 stop: | stop-local
 	@ $(info remove current service) \
-	  docker stack rm $(dk__STACK_NAME); \
+	  docker stack rm $(SWARM_NAME); \
       $(MAKE) reroute-clear
 
 ps: ##@docker_services list services
@@ -130,22 +127,25 @@ reroute-clear: $(abs_top_srcdir)/services/service_reroute.sh
 ##
 
 INSTALL_TARGETS = install install-% $(install_service_DATA) $(install_store_DATA)
+# INSTALL_TARGETS_VARIABLES = SERVICE SWARM_NAME SERVICE_NAME
+# SERVICE_I      = $(VENDOR)-$(SERVICE)
+# SWARM_NAME_I   = $(VENDOR)-$(SWARM_NAME)
+# SERVICE_NAME_I = $(VENDOR)-$(SERVICE_NAME)
 
-export datadir
-install_servicedir = $(or $(INSTALL_SERVICE_DIR),$(datadir)/$(dk__VENDOR)-services/$(dk__SERVICE))
-install_storedir   = $(or $(INSTALL_STORE_DIR),$(datadir)/$(dk__VENDOR)-services/$(dk__SERVICE))
+install-print:
+	@ echo "$(SERVICE) --> $(install_servicedir), $(SERVICEdir)"
 
-install_tmpdir = .install
+install_servicedir = $(or $(INSTALL_SERVICE_DIR),$(datadir)/$(VENDOR)-services/$(SERVICE))
+install_storedir   = $(or $(INSTALL_STORE_DIR),$(datadir)/$(VENDOR)-services/$(SERVICE))
+
+install_tmpdir   = .install
 ak__DIRECTORIES += $(install_tmpdir)
+
 install_service_DATA = $(install_tmpdir)/$(notdir $(COMPOSER_FILE)) \
 					   $(install_tmpdir)/$(SERVICE_CONFIG_FILE) \
 					   $(install_tmpdir)/$(SYSTEMD_SERVICE_FILE)
 
 install_store_DATA =
-
-SERVICEdir = $(install_servicedir)
-SOTREdir   = $(install_storedir)
-
 
 install-data-hook:
 	- $(MAKE) -C $(top_builddir)/services/ install SUBDIRS="" # install service utils
@@ -155,24 +155,23 @@ install-data-hook:
 ##
 ## TEMPLATES
 ##
-
 __ax_pl_envsubst  ?= $(PERL) -pe 's/([^\\]|^)\$$\{([a-zA-Z_][a-zA-Z_0-9]*)\}/$$1.$$ENV{$$2}/eg;s/\\\$$/\$$/g;' < $1 > $2
 __ax_pl_envsubst2 ?= $(PERL) -pe 's/([^\\]|^)\$$\(([a-zA-Z_][a-zA-Z_0-9]*)\)/$$1.$$ENV{$$2}/eg;s/\\\$$/\$$/g;' < $1 > $2
 
-export SERVICE_CONFIG_FILE   = $(dk__SERVICE).conf
-export SYSTEMD_SERVICE_FILE  = $(dk__VENDOR)-$(dk__SERVICE).service
+export datadir
+export SERVICE_CONFIG_FILE   = $(SERVICE).conf
+export SYSTEMD_SERVICE_FILE  = $(VENDOR)-$(SERVICE).service
 
+# $(foreach v,$(INSTALL_TARGETS_VARIABLES),$(eval $(INSTALL_TARGETS): $v := $($v_I)))
 $(INSTALL_TARGETS): SERVICE_DIR   := $(install_servicedir)
 $(INSTALL_TARGETS): STORE_DIR     := $(install_storedir)
 $(INSTALL_TARGETS): COMPOSER_FILE := $(install_servicedir)/$(notdir $(COMPOSER_FILE))
-
 
 $(install_tmpdir)/$(SERVICE_CONFIG_FILE): $(abs_top_srcdir)/services/service.config.template | $(install_tmpdir)
 	@ $(call __ax_pl_envsubst2,$<,$@);
 
 $(install_tmpdir)/$(SYSTEMD_SERVICE_FILE): $(abs_top_srcdir)/services/systemd.service.template | $(install_tmpdir)
 	@ $(call __ax_pl_envsubst2,$<,$@);
-
 
 $(COMPOSER_FILE): $(wildcard $(srcdir)/$(COMPOSER_FILE).in)
 	@ $(if $<,$(call __ax_pl_envsubst2,$<,$@),$(error missing $(srcdir)/$(COMPOSER_FILE).in));
@@ -183,7 +182,7 @@ $(install_tmpdir)/$(notdir $(COMPOSER_FILE)): $(wildcard $(srcdir)/$(COMPOSER_FI
 MOSTLYCLEANFILES = $(install_service_DATA) $(install_store_DATA)
 
 ##
-## NOTE: this was rewritte from Makefile and maches the default, but it seems that it must be redeclared to be written in
+## NOTE: this was rewritten from Makefile and maches the default, but it seems that it must be redeclared to be written in
 ##       the right order within the generated Makefile
 ##
 all-am: Makefile $(DATA) $(COMPOSER_FILE)
@@ -248,6 +247,8 @@ docker-%:
 ##    .##........##.....##.##..........##....##.....##.##.....##.##....##..##........##.....##
 ##    .##.........#######..########....##....##.....##..#######..##.....##.##........##.....##
 
+SERVICEdir = $(install_servicedir)
+SOTREdir   = $(install_storedir)
 
 install-SERVICEDATA:
 	@ $(MAKE) dk__$@
@@ -277,10 +278,40 @@ dk__install-SERVICEDATA:
 	 done | $(am__base_list) | \
 	 while read drs; do \
 	 	echo "copy directory: $$drs to $(DESTDIR)$(SERVICEdir)"; \
-	 	cp -a $$drs "$(DESTDIR)$(SERVICEdir)"; \
+	 	cp -an $$drs "$(DESTDIR)$(SERVICEdir)"; \
 	 done
 
 
+install-STOREDATA:
+	@ $(MAKE) dk__$@
+
+dk__install-STOREDATA:
+	@$(NORMAL_INSTALL)
+	@list='$(STORE_DATA)'; test -n "$(STOREdir)" || list=; \
+	 if test -n "$$list"; then \
+	   echo " $(MKDIR_P) '$(DESTDIR)$(STOREdir)'"; \
+	   $(MKDIR_P) "$(DESTDIR)$(STOREdir)" || exit 1; \
+	 fi; \
+	 for p in $$list; do \
+	   if test -f "$$p"; then echo "$$p"; \
+	   else p="$(srcdir)/$$p"; \
+	    if test -f "$$p"; then echo "$$p"; fi; \
+	   fi; \
+	 done | $(am__base_list) | \
+	 while read files; do \
+	   echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(STOREdir)'"; \
+	   $(INSTALL_DATA) $$files "$(DESTDIR)$(STOREdir)" || exit $$?; \
+	 done; \
+	 for p in $$list; do \
+	   if test -d "$$p"; then echo "$$p"; \
+	   else p="$(srcdir)/$$p"; \
+	    if test -d "$$p"; then echo "$$p"; fi; \
+	   fi; \
+	 done | $(am__base_list) | \
+	 while read drs; do \
+	 	echo "copy directory: $$drs to $(DESTDIR)$(STOREdir)"; \
+	 	cp -an $$drs "$(DESTDIR)$(STOREdir)"; \
+	 done
 
 
 
