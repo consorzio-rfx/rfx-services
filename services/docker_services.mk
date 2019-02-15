@@ -195,7 +195,11 @@ MOSTLYCLEANFILES = $(install_service_DATA) $(install_store_DATA)
 ##
 all-am: Makefile $(DATA) $(COMPOSER_FILE)
 
-
+##
+## NOTE: this was rewritten to make install target regenerate all files that could contain variables that must
+##       be overloaded. Remember to add those files to CLEANFILES to make the magic happen.
+##
+install: clean install-am
 
 
 
