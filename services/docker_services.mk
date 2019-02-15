@@ -155,7 +155,7 @@ install_service_DATA = $(install_tmpdir)/$(notdir $(COMPOSER_FILE)) \
 
 install_store_DATA =
 
-install-data-hook:
+install-data-hook::
 	- $(MAKE) -C $(top_builddir)/services/ install SUBDIRS="" # install service utils
 	- systemctl link -f $(SERVICE_DIR)/$(SYSTEMD_SERVICE_FILE); \
 	  systemctl daemon-reload
