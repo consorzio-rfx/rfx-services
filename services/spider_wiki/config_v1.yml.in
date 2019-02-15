@@ -9,21 +9,21 @@
 # Title of this site
 # ---------------------------------------------------------------------
 
-title: RFX Wiki BASE
+title: SPIDER Wiki
 
 # ---------------------------------------------------------------------
 # Full public path to the site, without the trailing slash
 # ---------------------------------------------------------------------
 # INCLUDE CLIENT PORT IF NOT 80/443!
 
-host: http://localhost:3000
+host: http://$(HOST_NAME):80
 
 # ---------------------------------------------------------------------
 # Port the main server should listen to (80 by default)
 # ---------------------------------------------------------------------
 # To use process.env.PORT, comment the line below:
 
-port: 3000
+port: 80
 
 # ---------------------------------------------------------------------
 # Data Directories
@@ -88,9 +88,9 @@ auth:
     bindDn: '$(ldap_bind_dn)'
     bindCredentials: $(ldap_search_password)
     searchBase: '$(ldap_base)'
-    searchFilter: (uid={{username}})
+    searchFilter: ($(ldap_usernameid)={{username}})
     tlsEnabled: false
-    tlsCertPath: C:\example\root_ca_cert.crt
+    tlsCertPath: 
   azure:
     enabled: false
     clientId: APP_ID
@@ -131,25 +131,27 @@ db: mongodb://wikidb:27017/wiki
 # ---------------------------------------------------------------------
 
 git:
-  url: https://gitlab.igi.cnr.it/rigoni/spider-codas.wiki.git
+  url: git@gitlab.igi.cnr.it:rigoni/spider-codas.wiki.git
   branch: master
   
   auth: 
-
     # Type: basic or ssh
-    type: basic
+    type: ssh
 
     # Only for Basic authentication:
-    username: rigoni
-    password: 
+    # username: rigoni
+    # password: 
 
     # Only for SSH authentication:
     privateKey: /etc/wiki/keys/wiki_rsa
     sslVerify: false
+    
+  signature:
+    name: rigoni
+    email: andrea.rigoni@igi.cnr.it
 
   # Default email to use as commit author
   serverEmail: andrea.rigoni@igi.cnr.it
-
   # Whether to use user email as author in commits
   showUserEmail: true
 

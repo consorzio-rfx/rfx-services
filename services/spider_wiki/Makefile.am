@@ -11,7 +11,10 @@ start-local:
 stop-local:
 
 export REROUTE_IP = 192.168.60.158
-export REROUTE_PORTS = 3000:3000
+export REROUTE_PORTS = 80:80
+
+# change this when dns available
+export HOST_NAME = $(REROUTE_IP)
 
 wiki_rsa:
 	@ ssh-keygen -t rsa -b 4096 -C "$(HOSTNAME)@$(STORE_DIR)/$@" -f $@ -q -N ""; \
