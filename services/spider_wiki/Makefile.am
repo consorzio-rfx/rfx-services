@@ -2,7 +2,6 @@ include $(top_srcdir)/Common.mk
 include $(top_srcdir)/services/docker_services.mk
 
 COMPOSER_FILE = docker-composer_v1.yml
-SERVICE_DATA  = $(srcdir)/config_v1.yml
 
 SERVICE    = wiki
 SWARM_NAME = spider
@@ -21,8 +20,9 @@ wiki_rsa:
       echo "paste the following line in gitlab sshkey section"; \
       cat $@.pub
 
-SERVICE_DATA = wiki_rsa wiki_rsa.pub \
-                config_v1.yml
+SERVICE_DATA = $(srcdir)/config_v1.yml \
+               wiki_rsa wiki_rsa.pub \
+               config_v1.yml
 
 config_v1.yml: config_v1.yml.in
 	@ $(call __ax_pl_envsubst2,$<,$@);
