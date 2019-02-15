@@ -1,0 +1,31 @@
+version: '3'
+services:
+
+  wikidb:
+    image: mongo:3
+    ports:
+      - '27017'
+    command: '--smallfiles --bind_ip ::,0.0.0.0'
+    environment:
+      - 'MONGO_LOG_DIR=/dev/null'
+    volumes:
+      - wikidb-data:/data/db
+
+  wiki:
+    image: 'requarks/wiki:latest'
+    depends_on:
+      - wikidb
+    ports:
+      - '3000:3000'
+    labels:
+      - "reroute.ip=$(REROUTE_IP)"
+      - "reroute.ports=$(REROUTE_PORTS)"
+    environment:
+      WIKI_ADMIN_EMAIL: andrea.rigoni@igi.cnr.it
+    volumes:
+      - $(STORE_DIR)/config_v1.yml:/var/wiki/config.yml
+      - $(STORE_DIR)/wiki_rsa:/etc/wiki/keys/wiki_rsa
+
+
+volumes:
+  wikidb-data:

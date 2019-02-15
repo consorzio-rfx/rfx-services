@@ -85,3 +85,5 @@ AX_KCONFIG_VAR_WITH([ldap_base],["set with ldap_base"])
 AC_SUBST([ldap_base])
 
 
+# AC_SUBST([SERVICE])
+# AC_SUBST([VENDOR])
