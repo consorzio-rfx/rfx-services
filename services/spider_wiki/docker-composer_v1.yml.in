@@ -16,7 +16,7 @@ services:
     depends_on:
       - wikidb
     ports:
-      - '3000:3000'
+      - 80
     labels:
       - "reroute.ip=$(REROUTE_IP)"
       - "reroute.ports=$(REROUTE_PORTS)"
@@ -25,7 +25,7 @@ services:
     volumes:
       - $(STORE_DIR)/config_v1.yml:/var/wiki/config.yml
       - $(STORE_DIR)/wiki_rsa:/etc/wiki/keys/wiki_rsa
-
+      - $(SERVICE_DIR)/img:/var/wiki/assets/images
 
 volumes:
   wikidb-data:
