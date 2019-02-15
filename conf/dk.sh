@@ -365,7 +365,7 @@ machine_create() {
         mkdir -p ${DOCKER_MACHINE_SORAGE_PATH};
     fi
 
-		if [ ! "$(machine-status)" = "Running" ]; then
+		if [ ! "$(machine_status)" = "Running" ]; then
     	machine create $_driver_args ${DOCKER_MACHINE_ARGS} $_swarm ${MACHINE_NAME}
 		fi
 }
@@ -377,7 +377,7 @@ machine_rm() {
 }
 
 machine_mount() {
-    test "$(machine-status)" = "Running" && _machine=${MACHINE_NAME}
+    test "$(machine_status)" = "Running" && _machine=${MACHINE_NAME}
 		: ${_machine:? "any configured machine could be found"}
 
     _ip=$(machine inspect -f '{{.Driver.IPAddress}}' $_machine)
@@ -431,7 +431,7 @@ machine_ls() {
 
 machine_init() {
 	# set -e
-	machine-create && eval $(machine env ${DOCKER_MACHINE})
+	machine_create && eval $(machine env ${DOCKER_MACHINE})
 
 }
 
