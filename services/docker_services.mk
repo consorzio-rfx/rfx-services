@@ -3,11 +3,17 @@ NODOCKERBUILD = %
 
 mkfile_path = $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir = $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
+ak__default_value = $(if $($1),,$(eval $1 = $2))
 
-VENDOR        ::= $(or $(VENDOR),rfx)
-SERVICE       ::= $(or $(SERVICE),$(current_dir))
-SWARM_NAME    ::= $(or $(SWARM_NAME),$(current_dir))
-SERVICE_NAME  ::= $(or $(SERVICE_NAME),$(SWARM_NAME)_$(SERVICE))
+$(call ak__default_value,VENDOR,rfx)
+$(call ak__default_value,SERVICE,$(current_dir))
+$(call ak__default_value,SWARM_NAME,$(current_dir))
+$(call ak__default_value,SERVICE_NAME,$(SWARM_NAME)_$(SERVICE))
+
+# VENDOR        := $(or $(VENDOR),rfx)
+# $(if $(SERVICE),,$(eval SERVICE = $(current_dir)))
+# $(if $(SWARM_NAME),,$(eval SWARM_NAME = $(current_dir)))
+# $(if $(SERVICE_NAME),,$(eval SERVICE_NAME = $(SWARM_NAME)_$(SERVICE)))
 
 SERVICE_DIR   = $(abs_srcdir)
 STORE_DIR     = $(abs_builddir)
@@ -125,15 +131,17 @@ reroute-clear: $(abs_top_srcdir)/services/service_reroute.sh
 ##
 ## INSTALL TARGETS
 ##
-
 INSTALL_TARGETS = install install-% $(install_service_DATA) $(install_store_DATA)
 # INSTALL_TARGETS_VARIABLES = SERVICE SWARM_NAME SERVICE_NAME
 # SERVICE_I      = $(VENDOR)-$(SERVICE)
 # SWARM_NAME_I   = $(VENDOR)-$(SWARM_NAME)
 # SERVICE_NAME_I = $(VENDOR)-$(SERVICE_NAME)
 
-install-print:
-	@ echo "$(SERVICE) --> $(install_servicedir), $(SERVICEdir)"
+# install-print:
+# 	@ echo "$(SERVICE) --> $(install_servicedir), $(SERVICEdir)"
+# 	@ echo "SERVICE = $(SERVICE)"
+# 	@ echo "SWARM = $(SWARM_NAME)"
+# 	@ echo "SERVICE_NAME = $(SERVICE_NAME)"
 
 install_servicedir = $(or $(INSTALL_SERVICE_DIR),$(datadir)/$(VENDOR)-services/$(SERVICE))
 install_storedir   = $(or $(INSTALL_STORE_DIR),$(datadir)/$(VENDOR)-services/$(SERVICE))
@@ -215,7 +223,7 @@ export DOCKER_DOCKERFILE
 export DOCKER_SHELL = /bin/sh
 export DOCKER_REGISTRY
 
-DSHELL = $(top_srcdir)/conf/dk.sh ${DSHELL_ARGS}
+DSHELL = $(top_srcdir)/c onf/dk.sh ${DSHELL_ARGS}
 NO_DOCKER_TARGETS = Makefile $(srcdir)/Makefile.in $(srcdir)/Makefile.am $(top_srcdir)/configure.ac $(ACLOCAL_M4) $(top_srcdir)/configure am--refresh \
                     $(am__aclocal_m4_deps) $(am__configure_deps) $(top_srcdir)/%.mk \
 					docker-%

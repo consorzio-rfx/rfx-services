@@ -20,7 +20,7 @@ wiki_rsa:
       echo "paste the following line in gitlab sshkey section"; \
       cat $@.pub
 
-SERVICE_DATA = $(srcdir)/config_v1.yml \
+SERVICE_DATA = \
                wiki_rsa wiki_rsa.pub \
                config_v1.yml
 
