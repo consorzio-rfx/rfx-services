@@ -10,6 +10,9 @@ SWARM_NAME = spider
 INSTALL_SERVICE_DIR = $(datadir)/$(VENDOR)-services/$(SERVICE_NAME)
 INSTALL_STORE_DIR = $(datadir)/$(VENDOR)-services/$(SERVICE_NAME)
 
+# manually edit config_v1.yml.in for now
+# export SPIDER_WIKI_URL    = "git@gitlab.igi.cnr.it:spider/spider-codas.wiki.git"
+# export SPIDER_WIKI_BRANCH = "master"
 
 start-local: 
 stop-local:
