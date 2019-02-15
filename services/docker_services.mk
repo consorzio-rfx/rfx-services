@@ -155,7 +155,7 @@ install_service_DATA = $(install_tmpdir)/$(notdir $(COMPOSER_FILE)) \
 
 install_store_DATA =
 
-install-data-hook:
+install-data-hook::
 	- $(MAKE) -C $(top_builddir)/services/ install SUBDIRS="" # install service utils
 	- systemctl link -f $(SERVICE_DIR)/$(SYSTEMD_SERVICE_FILE); \
 	  systemctl daemon-reload
@@ -195,7 +195,11 @@ MOSTLYCLEANFILES = $(install_service_DATA) $(install_store_DATA)
 ##
 all-am: Makefile $(DATA) $(COMPOSER_FILE)
 
-
+##
+## NOTE: this was rewritten to make install target regenerate all files that could contain variables that must
+##       be overloaded. Remember to add those files to CLEANFILES to make the magic happen.
+##
+install: clean install-am
 
 
 
