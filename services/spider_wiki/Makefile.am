@@ -18,7 +18,8 @@ export REROUTE_IP = 192.168.60.158
 export REROUTE_PORTS = 80:80
 
 # change this when the dns entry will be available
-export HOST_NAME = $(REROUTE_IP)
+export HOST_NAME = localhost
+$(INSTALL_TARGETS): HOST_NAME = $(REROUTE_IP)
 
 wiki_rsa:
 	@ ssh-keygen -t rsa -b 4096 -C "$(HOSTNAME)@$(STORE_DIR)/$@" -f $@ -q -N "" && \
@@ -28,9 +29,12 @@ wiki_rsa:
 install-data-hook::
 	- test -f $(SERVICE_DIR)/wiki_rsa && chmod 400 $(SERVICE_DIR)/wiki_rsa;
 
-SERVICE_DATA = \
+SERVICE_DATA = img \
                wiki_rsa wiki_rsa.pub \
                config_v1.yml
 
 config_v1.yml: config_v1.yml.in
 	@ $(call __ax_pl_envsubst2,$<,$@);
+
+
+CLEANFILES = config_v1.yml
