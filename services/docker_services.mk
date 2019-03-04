@@ -224,10 +224,13 @@ export DOCKER_CONTAINER
 export DOCKER_IMAGE
 export DOCKER_URL
 export DOCKER_DOCKERFILE
+export DOCKER_SHARES
+export DOCKER_NETWORKS
+export DOCKER_PORTS
 export DOCKER_SHELL = /bin/sh
 export DOCKER_REGISTRY
 
-DSHELL = $(top_srcdir)/c onf/dk.sh ${DSHELL_ARGS}
+DSHELL = $(top_srcdir)/conf/dk.sh ${DSHELL_ARGS}
 NO_DOCKER_TARGETS = Makefile $(srcdir)/Makefile.in $(srcdir)/Makefile.am $(top_srcdir)/configure.ac $(ACLOCAL_M4) $(top_srcdir)/configure am--refresh \
                     $(am__aclocal_m4_deps) $(am__configure_deps) $(top_srcdir)/%.mk \
 					docker-%

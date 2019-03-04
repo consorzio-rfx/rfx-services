@@ -9,21 +9,21 @@
 # Title of this site
 # ---------------------------------------------------------------------
 
-title: RFX Wiki BASE
+title: SPIDER Wiki
 
 # ---------------------------------------------------------------------
 # Full public path to the site, without the trailing slash
 # ---------------------------------------------------------------------
 # INCLUDE CLIENT PORT IF NOT 80/443!
 
-host: http://localhost:3000
+host: http://$(HOST_NAME):$(PORT)
 
 # ---------------------------------------------------------------------
 # Port the main server should listen to (80 by default)
 # ---------------------------------------------------------------------
 # To use process.env.PORT, comment the line below:
 
-port: 3000
+port: $(PORT)
 
 # ---------------------------------------------------------------------
 # Data Directories
@@ -56,18 +56,18 @@ langRtl: false
 # Site Authentication
 # ---------------------------------------------------------------------
 
-public: false
+public: trues
 
 auth:
-  defaultReadAccess: false
+  defaultReadAccess: true
   local:
     enabled: true
   google:
-    enabled: true
+    enabled: false
     clientId: GOOGLE_CLIENT_ID
     clientSecret: GOOGLE_CLIENT_SECRET
   microsoft:
-    enabled: true
+    enabled: false
     clientId: MS_APP_ID
     clientSecret: MS_APP_SECRET
   facebook:
@@ -83,14 +83,14 @@ auth:
     clientId: 'SLACK_CLIENT_ID'
     clientSecret: 'SLACK_CLIENT_SECRET'
   ldap:
-    enabled: false
-    url: ldap://serverhost:389
-    bindDn: cn='root'
-    bindCredentials: BIND_PASSWORD
-    searchBase: o=users,o=example.com
-    searchFilter: (uid={{username}})
+    enabled: true
+    url: ldap://$(ldap_host):$(ldap_port)
+    bindDn: '$(ldap_bind_dn)'
+    bindCredentials: $(ldap_search_password)
+    searchBase: '$(ldap_base)'
+    searchFilter: ($(ldap_usernameid)={{username}})
     tlsEnabled: false
-    tlsCertPath: C:\example\root_ca_cert.crt
+    tlsCertPath: 
   azure:
     enabled: false
     clientId: APP_ID
@@ -124,34 +124,40 @@ sessionSecret: 1234567890abcdefghijklmnopqrstuvxyz
 # Database Connection String
 # ---------------------------------------------------------------------
 
-db: mongodb://wikidb:27017/wiki
+# db: mongodb://wikidb:27017/wiki
+db: $(DBURL)
 
 # ---------------------------------------------------------------------
 # Git Connection Info
 # ---------------------------------------------------------------------
 
-git:
-  url: https://gitlab.igi.cnr.it/rigoni/test-wiki.git
-  branch: master
-  auth: 
+# git:
+#   # url: git@gitlab.igi.cnr.it:spider/spider-codas.wiki.git
+#   # branch: master
+#   url: $(GITURL)
+#   branch: $(GITBRANCH)
 
-    # Type: basic or ssh
-    type: basic
+#   auth: 
+#     # Type: basic or ssh
+#     type: ssh
 
-    # Only for Basic authentication:
-    username: rigoni
-    password: 
+#     # Only for Basic authentication:
+#     # username: rigoni
+#     # password: 
 
-    # Only for SSH authentication:
-    privateKey: /etc/wiki/keys/git.pem
+#     # Only for SSH authentication:
+#     # privateKey: /etc/wiki/keys/wiki_rsa
+#     privateKey: $(SSHKEY)
+#     sslVerify: false
+    
+#   signature:
+#     name: rigoni
+#     email: andrea.rigoni@igi.cnr.it
 
-    sslVerify: false
-
-  # Default email to use as commit author
-  serverEmail: marty@example.com
-
-  # Whether to use user email as author in commits
-  showUserEmail: true
+#   # Default email to use as commit author
+#   serverEmail: andrea.rigoni@igi.cnr.it
+#   # Whether to use user email as author in commits
+#   showUserEmail: true
 
 # ---------------------------------------------------------------------
 # Features
