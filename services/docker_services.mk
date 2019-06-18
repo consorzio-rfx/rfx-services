@@ -204,7 +204,18 @@ install: clean install-am
 
 
 
+define SERVICE_DIR_copy =
+$(word 1,$(subst :, ,$1)):
+	@ mkdir -p $$@; \
+      docker run --name nagios_copy \
+      --rm -t --entrypoint="/bin/sh" \
+      -v $$@:/copy_tmp $(DOCKER_IMAGE) \
+      -c "cp -a $(word 2,$(subst :, ,$1))/* /copy_tmp"
+endef
+$(foreach dir,$(SERVICE_DIR_COPY),$(eval $(call SERVICE_DIR_copy,$(dir))))
 
+create-dirs: ##@service create directories (todo: add this to defualt action)
+create-dirs: $(foreach dir,$(SERVICE_DIR_COPY),$(firstword $(subst :, ,$(dir))) )
 
 
 
@@ -224,6 +235,7 @@ export DOCKER_CONTAINER
 export DOCKER_IMAGE
 export DOCKER_URL
 export DOCKER_DOCKERFILE
+export DOCKER_ENTRYPOINT
 export DOCKER_SHARES
 export DOCKER_NETWORKS
 export DOCKER_PORTS
@@ -263,7 +275,7 @@ docker-%:
 ##    .##.........#######..########....##....##.....##..#######..##.....##.##........##.....##
 
 SERVICEdir = $(install_servicedir)
-SOTREdir   = $(install_storedir)
+STOREdir   = $(install_storedir)
 
 install-SERVICEDATA:
 	@ $(MAKE) dk__$@
