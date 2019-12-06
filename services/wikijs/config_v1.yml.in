@@ -131,33 +131,33 @@ db: $(DBURL)
 # Git Connection Info
 # ---------------------------------------------------------------------
 
-# git:
-#   # url: git@gitlab.igi.cnr.it:spider/spider-codas.wiki.git
-#   # branch: master
-#   url: $(GITURL)
-#   branch: $(GITBRANCH)
+git: 
+  # url: git@github.com:consorzio-rfx/WikijsDummy.wiki.git
+  # branch: master
+  url: $(GITURL)
+  branch: $(GITBRANCH)
 
-#   auth: 
-#     # Type: basic or ssh
-#     type: ssh
+  auth: 
+    # Type: basic or ssh
+    type: ssh
 
-#     # Only for Basic authentication:
-#     # username: rigoni
-#     # password: 
+    # Only for Basic authentication:
+    # username: rigoni
+    # password: 
 
-#     # Only for SSH authentication:
-#     # privateKey: /etc/wiki/keys/wiki_rsa
-#     privateKey: $(SSHKEY)
-#     sslVerify: false
+    # Only for SSH authentication:
+    # privateKey: /etc/wiki/keys/wiki_rsa
+    privateKey: $(SSHKEY)
+    sslVerify: false
     
-#   signature:
-#     name: rigoni
-#     email: andrea.rigoni@igi.cnr.it
+  signature:
+    name: rigoni
+    email: andrea.rigoni@igi.cnr.it
 
-#   # Default email to use as commit author
-#   serverEmail: andrea.rigoni@igi.cnr.it
-#   # Whether to use user email as author in commits
-#   showUserEmail: true
+  # Default email to use as commit author
+  serverEmail: andrea.rigoni@igi.cnr.it
+  # Whether to use user email as author in commits
+  showUserEmail: true
 
 # ---------------------------------------------------------------------
 # Features

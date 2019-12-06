@@ -1,8 +1,10 @@
 include $(top_srcdir)/Common.mk
 include $(top_srcdir)/services/docker_services.mk
 
-DOCKER_IMAGE  ?= $(or $(SPARK_DOCKER_IMAGE),$(VENDOR)/$(SERVICE):$(VERSION))
-EXTERNAL_IP   ?= $(or $(SPARK_EXTERNAL_IP),$(HOSTNAME))
+
+DOCKER_IMAGE  = $(or $(SPARK_DOCKER_IMAGE),)
+EXTERNAL_IP   = $(or $(SPARK_EXTERNAL_IP),$(HOSTNAME))
+
 COMPOSER_FILE ?= $(srcdir)/docker-compose.yml
 STORE_DIR     ?= $(abs_builddir)
 

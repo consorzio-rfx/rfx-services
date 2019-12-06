@@ -1,10 +1,8 @@
 include $(top_srcdir)/Common.mk
 include $(top_srcdir)/services/docker_services.mk
 
-COMPOSER_FILE = docker-composer_v1.yml
-
+COMPOSER_FILE = docker-compose_v1-dev.yml
 SERVICE    = wiki
-SWARM_NAME = spider
 
 # rename install targets to spider_wiki
 INSTALL_SERVICE_DIR = $(datadir)/$(VENDOR)-services/$(SERVICE_NAME)
@@ -23,9 +21,9 @@ export PORT = 80
 $(INSTALL_TARGETS): HOST_NAME = $(REROUTE_IP)
 
 # config for container
-export SSHKEY    = 
-export GITURL    = 
-export GITBRANCH = 
+export SSHKEY    = $(abs_builddir)/wiki_rsa
+export GITURL    = git@github.com:consorzio-rfx/WikijsDummy.wiki.git
+export GITBRANCH = master
 export DBURL     = mongodb://wikidb:27017/wiki
 
 wiki_rsa:
@@ -59,6 +57,8 @@ CLEANFILES = config_v1.yml
 ## .########..########....###....########.########
 
 
+export WIKI_ADMIN_EMAIL = andrea.rigoni@igi.cnr.it
+
 DOWNLOADS = wiki-v1
 
 wiki-v1: ##@wiki  download code
@@ -67,9 +67,8 @@ wiki_v1_BRANCH = master
 
 
 # config for development
-wiki-v1/config.yml: SSHKEY=$(abs_builddir)/wiki_rsa
-wiki-v1/config.yml: PORT=8080
-wiki-v1/config.yml: DBURL=mongodb://10.0.34.3:27017/wiki
+wiki-v1/config.yml: PORT = 8080
+wiki-v1/config.yml: DBURL = mongodb://10.0.1.9:27017/wiki
 wiki-v1/config.yml: config_v1.yml.in | wiki-v1
 	@ $(call __ax_pl_envsubst2,$<,$@);
 
@@ -81,7 +80,8 @@ DOCKER_TARGETS = image-%
 
 image-%: DOCKER_CONTAINER = wiki
 image-%: DOCKER_IMAGE = requarks/wiki:latest
-image-%: DOCKER_NETWORKS = spider_default
+image-%: DOCKER_NETWORKS = wikijs_default
+image-%: DOCKER_ENTRYPOINT = /bin/sh
 image-%: DOCKER_PORTS = 8080:8080 9229:9229 9222:9222 3000:3000
 image-init:
 	@:
@@ -99,20 +99,23 @@ DOCKER_TARGETS += wiki-dev
 wiki-dev: DOCKER_CONTAINER = wiki
 wiki-dev: 
 	@ cd wiki-v1; \
-	  npm install; \
+	  yarn install; \
 	  yarn run dev
 
 
-
+wiki-start: SERVICE=wikidb
 wiki-start: ##@wiki start wiki development
-wiki-start: wiki-prepare wiki-dev
+wiki-start: start wiki-prepare wiki-dev
 
 DOCKER_TARGETS += wiki-stop
 wiki-stop: ##@wiki stop wiki development
 wiki-stop: DOCKER_CONTAINER = wiki
-wiki-stop:
+wiki-stop: 
 	@ cd wiki-v1; \
 	  yarn run stop
+
+
+
 
 
 # DOCKER_TARGETS += wiki-dev-config
@@ -120,3 +123,6 @@ wiki-stop:
 # wiki-dev-config: 
 # 	@ cd wiki-v1; \
 # 	  yarn run dev-configure
+
+
+
