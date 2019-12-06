@@ -106,5 +106,7 @@ AC_CONFIG_FILES(
 				 services/mediawiki/Makefile
 				 services/wikijs/Makefile
 				 services/spider_wiki/Makefile
+				 services/nagios/Makefile
+				 services/ansible/Makefile
                )
 AC_OUTPUT

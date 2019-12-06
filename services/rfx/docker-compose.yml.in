@@ -1,6 +1,5 @@
 # created $(date)
 version: "3.2"
-
 services:
   registry:
     restart: always
@@ -15,8 +14,8 @@ services:
     #   REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
     volumes:
       - docker-registry:/var/lib/registry
-    networks:
-      - service
+    # networks:
+    #   - service
     # networks:
     #   service_bridge:
     #       ipv4_address: 172.19.0.1
@@ -27,8 +26,35 @@ services:
          - node.role == manager
          - node.hostname == $(HOSTNAME)
 
+
+  # docker run -d -p 9000:9000 --name portainer --restart always 
+  # -v /var/run/docker.sock:/var/run/docker.sock 
+  # -v portainer_data:/data portainer/portainer         
+  portainer:
+    restart: always
+    image: portainer/portainer
+    ports:
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data portainer/portainer
+      
+  # sudo docker run -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher
+  rancher:
+    restart: unless-stopped
+    image: rancher/rancher
+    ports:
+      - 9080:80
+      - 9081:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+
 volumes:
   docker-registry:
+  portainer-data:
+
 
 networks:
   service:

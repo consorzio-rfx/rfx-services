@@ -5,13 +5,11 @@ include $(top_srcdir)/services/docker_machine.mk
 
 
 COMPOSER_FILE = docker-compose.yml
-SERVICE = registry
+SERVICE       = registry
+SWARM_NAME    = rfx
 
 start-local: 
 stop-local:
-
-
-
 
 
 # networks.yml: networks.yml.in

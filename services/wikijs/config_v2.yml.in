@@ -150,6 +150,31 @@ redis:
 # Git Connection Info
 # ---------------------------------------------------------------------
 
+git:
+  url: https://gitlab.igi.cnr.it/rigoni/test-wiki.git
+  #branch: master
+  branch: bootstrap
+  
+  auth: 
+
+    # Type: basic or ssh
+    type: basic
+
+    # Only for Basic authentication:
+    username: rigoni
+    password: 
+
+    # Only for SSH authentication:
+    privateKey: /etc/wiki/keys/git.pem
+    sslVerify: false
+
+  # Default email to use as commit author
+  serverEmail: marty@example.com
+
+  # Whether to use user email as author in commits
+  showUserEmail: true
+
+
 # git:
 #   url: https://github.com/Organization/Repo
 #   branch: master

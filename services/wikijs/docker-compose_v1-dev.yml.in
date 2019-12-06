@@ -1,0 +1,19 @@
+version: '3.3'  # 3.3 needed to make default network attachable
+services:
+  wikidb:
+    image: mongo:3
+    ports:
+      - '27017:27017'
+    command: '--smallfiles --bind_ip ::,0.0.0.0'
+    environment:
+      - 'MONGO_LOG_DIR=/dev/null'
+    volumes:
+      - wikidb-dev:/data/db
+
+volumes:
+  wikidb-dev:
+
+networks:
+  default:
+    driver: overlay
+    attachable: true

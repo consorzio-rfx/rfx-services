@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'  # 3.3 needed to make default network attachable
 services:
 
   wikidb:
@@ -29,3 +29,9 @@ services:
 
 volumes:
   wikidb-data:
+
+
+networks:
+  default:
+    driver: overlay
+    attachable: true

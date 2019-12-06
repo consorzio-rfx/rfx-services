@@ -1,6 +1,6 @@
 include $(top_srcdir)/Common.mk
 include $(top_srcdir)/services/docker_services.mk
-
+include $(top_srcdir)/services/docker_machine.mk
 
 ##    ..######..########.########..##.....##.####..######..########
 ##    .##....##.##.......##.....##.##.....##..##..##....##.##......
@@ -18,7 +18,6 @@ start-local:
 stop-local:
 
 SERVICE_DATA = newaccount
-
 
 
 
@@ -42,8 +41,6 @@ image-push: DOCKER_REGISTRY = $(DOCKER_REGISTRY_SERVER_HOST):$(DOCKER_REGISTRY_S
 image-push: image-init docker-push
 
 image-clean: docker-clean
-
-
 
 ## CLEAN
 clean-local: image-clean

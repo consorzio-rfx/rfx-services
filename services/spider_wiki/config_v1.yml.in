@@ -16,14 +16,14 @@ title: SPIDER Wiki
 # ---------------------------------------------------------------------
 # INCLUDE CLIENT PORT IF NOT 80/443!
 
-host: http://$(HOST_NAME)
+host: http://$(HOST_NAME):$(PORT)
 
 # ---------------------------------------------------------------------
 # Port the main server should listen to (80 by default)
 # ---------------------------------------------------------------------
 # To use process.env.PORT, comment the line below:
 
-port: 80
+port: $(PORT)
 
 # ---------------------------------------------------------------------
 # Data Directories
@@ -56,7 +56,7 @@ langRtl: false
 # Site Authentication
 # ---------------------------------------------------------------------
 
-public: false
+public: trues
 
 auth:
   defaultReadAccess: true
@@ -124,16 +124,19 @@ sessionSecret: 1234567890abcdefghijklmnopqrstuvxyz
 # Database Connection String
 # ---------------------------------------------------------------------
 
-db: mongodb://wikidb:27017/wiki
+# db: mongodb://wikidb:27017/wiki
+db: $(DBURL)
 
 # ---------------------------------------------------------------------
 # Git Connection Info
 # ---------------------------------------------------------------------
 
 git:
-  url: git@gitlab.igi.cnr.it:spider/spider-codas.wiki.git
-  branch: master
-  
+  # url: git@gitlab.igi.cnr.it:spider/spider-codas.wiki.git
+  # branch: master
+  url: $(GITURL)
+  branch: $(GITBRANCH)
+
   auth: 
     # Type: basic or ssh
     type: ssh
@@ -143,7 +146,8 @@ git:
     # password: 
 
     # Only for SSH authentication:
-    privateKey: /etc/wiki/keys/wiki_rsa
+    # privateKey: /etc/wiki/keys/wiki_rsa
+    privateKey: $(SSHKEY)
     sslVerify: false
     
   signature:
