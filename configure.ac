@@ -107,5 +107,6 @@ AC_CONFIG_FILES(
 				 services/spider_wiki/Makefile
 				 services/nagios/Makefile
 				 services/ansible_awx/Makefile
+				 services/open-balena/Makefile
                )
 AC_OUTPUT
