@@ -95,7 +95,6 @@ AC_CONFIG_FILES(
          		 services/docker-registry/Makefile
 				 services/rfx/Makefile
 				 services/nfs/Makefile
-				 services/btsync/Makefile
 				 services/BVLC_caffe/Makefile
 				 services/gitlab/Makefile
 				 services/sharelatex/Makefile
@@ -107,6 +106,6 @@ AC_CONFIG_FILES(
 				 services/wikijs/Makefile
 				 services/spider_wiki/Makefile
 				 services/nagios/Makefile
-				 services/ansible/Makefile
+				 services/ansible_awx/Makefile
                )
 AC_OUTPUT

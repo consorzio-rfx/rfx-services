@@ -25,6 +25,9 @@ services:
       - postgres
     ports:
       - "8052:8052"
+    labels:
+      - "reroute.ip=${REROUTE_IP}"
+      - "reroute.ports=${REROUTE_PORTS}"
     hostname: awxweb
     user: root
     restart: unless-stopped
