@@ -108,5 +108,7 @@ AC_CONFIG_FILES(
 				 services/nagios/Makefile
 				 services/ansible_awx/Makefile
 				 services/open-balena/Makefile
+				 services/ghost/Makefile
+				 services/image-super-resolution/Makefile
                )
 AC_OUTPUT

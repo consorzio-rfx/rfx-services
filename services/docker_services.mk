@@ -104,7 +104,7 @@ compose-up:   ##@@docker_composer local command up
 compose-down: ##@@docker_composer local command down
 compose-logs: ##@@docker_composer local command logs
 compose-up:
-	@ docker-compose -f ${COMPOSER_FILE} up -d $(SERVICE)
+	@ docker-compose -f ${COMPOSER_FILE} up 
 compose-logs:
 	@ docker-compose -f ${COMPOSER_FILE} logs -f $(SERVICE)
 compose-down:
@@ -122,10 +122,10 @@ docker-registry-init:
 
 
 reroute: $(abs_top_srcdir)/services/service_reroute.sh
-	@ sudo -E $^ -s $(SERVICE_NAME) reroute_ports ||:
+	@ sudo -E $^ --debug -s $(SERVICE_NAME) reroute_ports ||:
 
 reroute-clear: $(abs_top_srcdir)/services/service_reroute.sh
-	@ sudo -E $^ -s $(SERVICE_NAME) clear_ports ||:
+	@ sudo -E $^ --debug -s $(SERVICE_NAME) clear_ports ||:
 
 
 ##
