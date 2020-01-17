@@ -18,7 +18,12 @@ services:
 
   worker:
     image: bde2020/spark-worker:2.4.4-hadoop2.7
-    replicas: 2
+    deploy:
+      replicas: 2
+      # placement:
+      #   constraints:
+      #    - node.role == manager
+      #    - node.hostname == ${HOSTNAME}
     depends_on:
       - spark
     ports:
