@@ -13,15 +13,24 @@ export abs_srcdir \
 
 #	   DOCKER_IMAGE
 
-LOCAL_DIRS = ${STORE_DIR}/redis_data
+LOCAL_DIRS = 	${SERVICE_DIR}/.jupyter \
+				${STORE_DIR}/work
+
 
 DIRECTORIES = $(LOCAL_DIRS)
 
-$(DIRECTORIES):
-	@ $(MKDIR_P) $@
 
+# $(DIRECTORIES):
+# 	@ $(MKDIR_P) $@
 # build:
 # 	@ docker build -t $(DOCKER_IMAGE) $(srcdir)
+
+
+DOWNLOADS = spark-build
+spark-build: ##@spark download docker build support
+spark_build_URL = https://github.com/AndreaRigoni/docker-spark.git
+spark_build_BRANCH = master
+
 
 all:
 
