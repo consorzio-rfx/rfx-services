@@ -6,6 +6,8 @@ services:
     # restart: always
     depends_on:
       - db
+    ports:
+      - 2368:2368
     environment:
       url: $(GHOST_URL)
       database__client: mysql
@@ -15,6 +17,9 @@ services:
       database__connection__database: ghost
     volumes:
       - ${STORE_DIR}/ghost_content:/var/lib/ghost/content
+    labels:
+      - "reroute.ip=$(REROUTE_IP)"
+      - "reroute.ports=2368:2368"
 
   db:
     image: mysql:5.7
@@ -31,16 +36,23 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 2368:2368
     labels:
       - "reroute.ip=$(REROUTE_IP)"
-      - "reroute.ports=$(REROUTE_PORTS)"
+      - "reroute.ports=80:80 443:443"
     volumes:
-      - ${STORE_DIR}/nginx/etc/letsencrypt/:/etc/letsencrypt/
+      - ${SERVICE_DIR}/nginx/etc:/etc/nginx
       - ${STORE_DIR}/nginx/html:/usr/share/nginx/html
-      - ${SERVICE_DIR}/nginx/etc/default.conf:/etc/nginx/conf.d/default.conf
+      - ${SERVICE_DIR}/nginx/default.conf:/etc/nginx/conf.d/default.conf
       - "${SSLCERT_FILE_CRT}:/etc/nginx/ca.crt"
       - "${SSLCERT_FILE_KEY}:/etc/nginx/ca.key"
+
+
+  # certbot:
+  #   image: certbot-nginx:latest
+  #   volumes:
+  #     - ${SERVICE_DIR}/nginx/etc:/etc/nginx
+  #     - ${STORE_DIR}/nginx/html:/usr/share/nginx/html
+
 
 
 # volumes:

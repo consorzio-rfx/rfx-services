@@ -9,8 +9,8 @@ COMPOSER_FILE = docker-compose.yml
 
 REROUTE_IP     = 127.0.0.1
 REROUTE_PORTS  = 80:80 443:443 2368:2368
-HOSTNAME  = localhost
-GHOST_URL = http://localhost
+HOSTNAME  = ghost.igi.cnr.it
+GHOST_URL = http://ghost.igi.cnr.it
 
 export REROUTE_IP \
        REROUTE_PORTS \
@@ -20,17 +20,43 @@ export REROUTE_IP \
        SSLCERT_FILE_KEY 
 
 
-
 DIRS =  ${STORE_DIR}/nginx/etc/ \
         ${STORE_DIR}/nginx/etc/letsencrypt/ \
         ${STORE_DIR}/nginx/html \
-  	    ${STORE_DIR}/ghost_mysql \
-  	    ${STORE_DIR}/ghost_content
+  	     ${STORE_DIR}/ghost_mysql \
+  	     ${STORE_DIR}/ghost_content
+        
 
 DIRECTORIES = $(DIRS)
 
 start-local: ${SSLCERT_FILE} | $(DIRS)
 stop-local:
+
+
+NGINX_DOCKER_IMAGE = nginx:latest
+
+$(SERVICE_DIR)/nginx/etc:
+	@ $(MKDIR_P) $@;
+	@ docker run --name docker_directory_copy \
+	    --rm -t --entrypoint="/bin/sh" \
+	    -v $@:/dst $(NGINX_DOCKER_IMAGE) \
+	    -c "cp -a /etc/nginx/* /dst"
+
+
+
+service-dirs: $(SERVICE_DIR)/nginx/etc
+
+
+
+
+# DOCKER_TARGETS = cb-init
+# cb-init: DOCKER_CONTAINER = certbot
+# cb-init: DOCKER_IMAGE = certbot-nginx:latest
+# cb-init: DOCKER_URL = $(srcdir)/certbot
+# cb-init: ##@certbot init image
+# 	@;
+
+
 
 
 ## ////////////////////////////////////////////////////////////////////////////////
