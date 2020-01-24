@@ -19,11 +19,22 @@ LOCAL_DIRS = 	${SERVICE_DIR}/.jupyter \
 
 DIRECTORIES = $(LOCAL_DIRS)
 
+SERVICE_DATA = ${SERVICE_DIR}/pyspark_mdsplus \
+               ${SERVICE_DIR}/.jupyter \
+			   ${STORE_DIR}/work
 
-# $(DIRECTORIES):
-# 	@ $(MKDIR_P) $@
-# build:
-# 	@ docker build -t $(DOCKER_IMAGE) $(srcdir)
+
+DOCKER_TARGETS = build
+build: DOCKER_CONTAINER = pyspark_mdsplus
+build: DOCKER_IMAGE = jupyter/pyspark_mdsplus
+build: DOCKER_URL   = ${SERVICE_DIR}/pyspark_mdsplus
+build: ##@ ypspark jupyter container with mdsplus
+	@ $(info Image built...)
+
+## TODO: add a thing that looks for an image in repository and build if the image
+## doesn't exist
+
+## TODO: add image build system to systemctl scripts
 
 
 DOWNLOADS = spark-build
