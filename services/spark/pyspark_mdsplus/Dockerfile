@@ -14,4 +14,6 @@ RUN cd /usr/local/mdsplus/python/MDSplus; \
     python2 setup.py install; \
     python3 setup.py install
 
+RUN update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java;
+
 USER jovyan

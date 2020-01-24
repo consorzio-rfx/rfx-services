@@ -28,8 +28,9 @@ DOCKER_TARGETS = build
 build: DOCKER_CONTAINER = pyspark_mdsplus
 build: DOCKER_IMAGE = jupyter/pyspark_mdsplus
 build: DOCKER_URL   = ${SERVICE_DIR}/pyspark_mdsplus
+build: DOCKER_ENTRYPOINT = /bin/sh
 build: ##@ ypspark jupyter container with mdsplus
-	@ $(info Image built...)
+	@:;
 
 ## TODO: add a thing that looks for an image in repository and build if the image
 ## doesn't exist
