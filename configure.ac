@@ -110,5 +110,6 @@ AC_CONFIG_FILES(
 				 services/open-balena/Makefile
 				 services/ghost/Makefile
 				 services/image-super-resolution/Makefile
+				 services/gitlab-runner/Makefile
                )
 AC_OUTPUT
