@@ -3,8 +3,8 @@ include $(top_srcdir)/services/docker_services.mk
 
 DOCKER_IMAGE  = jenkins/jenkins
 COMPOSER_FILE = docker-compose.yml
+DIRECTORIES = ${STORE_DIR}/jenkins-data
 
-start-local:
+start-local: $(DIRECTORIES)
 stop-local:
-
 
