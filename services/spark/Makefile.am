@@ -2,28 +2,49 @@ include $(top_srcdir)/Common.mk
 include $(top_srcdir)/services/docker_services.mk
 
 
-DOCKER_IMAGE  = $(or $(SPARK_DOCKER_IMAGE),)
-EXTERNAL_IP   = $(or $(SPARK_EXTERNAL_IP),$(HOSTNAME))
+COMPOSER_FILE = docker-compose.yml
 
-COMPOSER_FILE ?= $(srcdir)/docker-compose.yml
-STORE_DIR     ?= $(abs_builddir)
+REROUTE_IP     = 127.0.0.1
+REROUTE_PORTS  = 8888:8888 8080:8080 8081:8081 7077:7077
 
 export abs_srcdir \
        abs_builddir \
-	   DOCKER_IMAGE \
 	   EXTERNAL_IP
 
-LOCAL_DIRS = ${STORE_DIR}/redis_data
+#	   DOCKER_IMAGE
+
+LOCAL_DIRS = 	${SERVICE_DIR}/.jupyter \
+				${STORE_DIR}/work
+
 
 DIRECTORIES = $(LOCAL_DIRS)
 
-$(DIRECTORIES):
-	@ $(MKDIR_P) $@
+SERVICE_DATA = ${SERVICE_DIR}/pyspark_mdsplus \
+               ${SERVICE_DIR}/.jupyter \
+			   ${STORE_DIR}/work
 
-build:
-	@ docker build -t $(DOCKER_IMAGE) $(srcdir)
 
-all: start
+DOCKER_TARGETS = build
+build: DOCKER_CONTAINER = pyspark_mdsplus
+build: DOCKER_IMAGE = jupyter/pyspark_mdsplus
+build: DOCKER_URL   = ${SERVICE_DIR}/pyspark_mdsplus
+build: DOCKER_ENTRYPOINT = /bin/sh
+build: ##@ ypspark jupyter container with mdsplus
+	@:;
+
+## TODO: add a thing that looks for an image in repository and build if the image
+## doesn't exist
+
+## TODO: add image build system to systemctl scripts
+
+
+DOWNLOADS = spark-build
+spark-build: ##@spark download docker build support
+spark_build_URL = https://github.com/AndreaRigoni/docker-spark.git
+spark_build_BRANCH = master
+
+
+all:
 
 start-local: | $(LOCAL_DIRS)
 stop-local:

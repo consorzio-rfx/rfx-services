@@ -20,6 +20,10 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 $wgSitename = $_ENV["WG_SITENAME"];
 
+# TODO GMY test
+# $wgCookieSecure = 'detect';
+# $wgCookieSecure = false;    - testato ma da' lo stesso errore
+
 ## The URL base path to the directory containing the wiki;
 ## defaults for all runtime URL paths are based off of this.
 ## For more information on customizing the URLs
@@ -29,42 +33,60 @@ $wgScriptPath = "";
 
 ## The protocol and server name to use in fully-qualified URLs
 # $wgServer = "http://localhost:30002";
-$wgServer = "http://localhost:30014";
+$wgServer = "http://spilds.rfx.local:8011";
 
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
 
 ## The URL path to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!
-$wgLogo = "$wgResourceBasePath/resources/assets/wiki.png";
+$wgLogo = "$wgResourceBasePath/resources/assets/logoRFX254x60.png";
 
 ## UPO means: this is also a user preference option
 
-$wgEnableEmail = true;
+$wgEnableEmail = false;
 $wgEnableUserEmail = true; # UPO
 
-$wgEmergencyContact = "apache@localhost";
-$wgPasswordSender = "apache@localhost";
+$wgEmergencyContact = "webmaster@igi.cnr.it";
+$wgPasswordSender = "webmaster@igi.cnr.it";
 
 $wgEnotifUserTalk = false; # UPO
 $wgEnotifWatchlist = false; # UPO
 $wgEmailAuthentication = true;
 
 ## Database settings
-$wgDBtype = "mysql";
-$wgDBserver = "database";
-$wgDBname = "my_wiki";
-$wgDBuser = "wikiuser";
-$wgDBpassword = "example";
+$wgDBtype = "sqlite";
+$wgDBserver = "";
+$wgDBname = "rfxwiki";
+$wgDBuser = "";
+$wgDBpassword = "";
 
 # MySQL specific settings
-$wgDBprefix = "";
+# $wgDBprefix = "";
 
 # MySQL table options to use during installation or update
-$wgDBTableOptions = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
+# $wgDBTableOptions = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
+
+# SQLite-specific settings
+$wgSQLiteDataDir = "/var/www/data";
+$wgObjectCaches[CACHE_DB] = [
+        'class' => 'SqlBagOStuff',
+        'loggroup' => 'SQLBagOStuff',
+        'server' => [
+                'type' => 'sqlite',
+                'dbname' => 'wikicache',
+                'tablePrefix' => '',
+                'dbDirectory' => $wgSQLiteDataDir,
+                'flags' => 0
+        ]
+];
 
 ## Shared memory settings
-$wgMainCacheType = CACHE_ACCEL;
+
+
+#$wgMainCacheType = CACHE_ACCEL;
+$wgMainCacheType = CACHE_NONE;
+# $wgMainCacheType = CACHE_DB; # - TODO - testato ma non va
 $wgMemCachedServers = [];
 
 ## To enable image uploads, make sure the 'images' directory
@@ -94,14 +116,14 @@ $wgShellLocale = "C.UTF-8";
 # Site language code, should be one of the list in ./languages/data/Names.php
 $wgLanguageCode = "en";
 
-$wgSecretKey = "346a105e34663c3cb9c37262f54075941e9e979777e0e9526b44a449fb3e20c9";
+$wgSecretKey = "fbb9a727dbbb81a2a3654c7a3b0c800b82eb93f026618a250242d883fb11f622";
 
 # Changing this will log out all existing sessions.
 $wgAuthenticationTokenVersion = "1";
 
 # Site upgrade key. Must be set to a string (default provided) to turn on the
 # web installer while LocalSettings.php is in place
-$wgUpgradeKey = "4751a99f35bfd509";
+$wgUpgradeKey = "34ea931c7051976a";
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
@@ -114,9 +136,21 @@ $wgRightsIcon = "";
 # Path to the GNU diff3 utility. Used for conflict resolution.
 $wgDiff3 = "/usr/bin/diff3";
 
+
+
+// # Disable reading by anonymous users
+// $wgGroupPermissions['*']['read'] = false;
+
+// # Prevent new user registrations except by sysops
+// $wgGroupPermissions['*']['createaccount'] = false;
+
+// # Disable anonymous editing
+// $wgGroupPermissions['*']['edit'] = false;
+
+
 ## Default skin: you can change the default skin. Use the internal symbolic
 ## names, ie 'vector', 'monobook':
-$wgDefaultSkin = "vector";
+# $wgDefaultSkin = "vector";
 
 # Enabled skins.
 # The following skins were automatically enabled:
@@ -127,4 +161,236 @@ wfLoadSkin( 'Vector' );
 
 # End of automatically generated settings.
 # Add more configuration options below.
+
+#
+# CAVENDISH SKIN RFX
+#
+
+# require_once("$IP/rfx/skins/cavendishmw/cavendishmw.php");
+wfLoadSkin( 'Cavendish-master', "$IP/rfx/skins/Cavendish-master/skin.json" );
+$wgDefaultSkin = 'cavendish';
+$cavendishShowSitename = false;
+$cavendishLogoWidth = '256px';
+$cavendishLogoHeight = '52px';
+
+
+#
+# DEBUG [ RFX ]
+#
+
+/**
+ * The debug log file must never be publicly accessible because it
+ * contains private data. But ensure that the directory is writeable by the
+ * PHP script running within your Web server.
+ * The filename is with the database name of the wiki.
+ */
+$rfxLOGDIR = "/var/www/data/logs";
+$wgDebugLogFile = "{$rfxLOGDIR}/debug-{$wgDBname}.log";
+// $wgDebugLogFile = "/tmp/wiki.log";
+
+wfDebug('MA porco cane');
+
+// Groups from MediaWiki core
+$wgDBerrorLog = '{$rfxLOGDIR}/dberror.log';
+$wgRateLimitLog = '{$rfxLOGDIR}/ratelimit.log';
+$wgDebugLogGroups = array(
+	'resourceloader' => '{$rfxLOGDIR}/resourceloader.log',
+	'exception' => '{$rfxLOGDIR}/exception.log',
+	'error' => '{$rfxLOGDIR}/error.log',
+	#'exception-json' => '{$rfxLOGDIR}/exception.json',
+
+	// Extra log groups from your extension
+	#'myextension' => '{$rfxLOGDIR}/myextension.log',
+	#'somegroup' => '{$rfxLOGDIR}/somegroup.log',
+);
+
+
+#
+# EXTENSIONS AVAILABLE FOR UPLOAD [ RFX ]
+#
+$wgFileExtensions[] = 'doc';
+$wgFileExtensions[] = 'docx';
+$wgFileExtensions[] = 'xls';
+$wgFileExtensions[] = 'xlsm';
+$wgFileExtensions[] = 'zip';
+$wgFileExtensions[] = 'pdf';
+$wgFileExtensions[] = 'mpp';
+$wgFileExtensions[] = 'odt';
+$wgFileExtensions[] = 'ods';
+$wgFileExtensions[] = 'svg';
+
+#
+# LDAP [ RFX ]
+#
+
+# needed before LDAP extension load
+$wgGroupPermissions['*']['autocreateaccount'] = true;
+
+#require_once "$IP/rfx/extensions/LdapAuthentication/LdapAuthentication.php";
+// wfLoadExtension( 'LdapAuthentication', "$IP/rfx/extensions/LdapAuthentication/extension.json" );
+// $wgAuth = new LdapAuthenticationPlugin();
+
+
+# show debug messages in /tmp/systemd-private-677909b6ad1043698c135dfa526e1d4f-httpd.service-b20tad/tmp/debug.log
+#$wgLDAPDebug = 10;
+#$wgDebugLogGroups["ldap"] = "/tmp/debug.log";
+
+
+$wgLDAPDomainNames = array(
+	'igi.cnr.it'
+);
+$wgLDAPServerNames = array(
+	'igi.cnr.it' => 'ntserv1.rfxoffline.local'
+);
+# Only allow LDAP users
+$wgLDAPUseLocal = false;
+
+$wgLDAPEncryptionType = array(
+	"igi.cnr.it"=>"notls"
+);
+# User to bind as
+$wgLDAPProxyAgent =  array(
+	'igi.cnr.it' => 'cn=ldapsearch,cn=Users,dc=rfxoffline,dc=local'
+);
+$wgLDAPProxyAgentPassword = array(
+	'igi.cnr.it' => 'searchldap'
+);
+
+$wgLDAPBaseDNs = array(
+	'igi.cnr.it' => 'cn=Users,dc=rfxoffline,dc=local'
+);
+$wgLDAPUserBaseDNs= array(
+	'igi.cnr.it' => 'cn=Users,dc=rfxoffline,dc=local'
+);
+#   'igi.cnr.it' => 'cn=sAMAccountName,cn=Users,dc=rfxoffline,dc=local'
+$wgLDAPGroupBaseDNs= array(
+	'igi.cnr.it' => 'cn=groups,cn=Users,dc=rfxoffline,dc=local'
+);
+
+$wgLDAPSearchAttributes = array(
+	'igi.cnr.it' => 'cn'
+);
+#   'igi.cnr.it' => 'sAMAccountName'
+
+$wgLDAPGroupObjectclass = array(
+	"igi.cnr.it"=>"univentionGroup"
+);
+# attribute defining a group
+$wgLDAPGroupNameAttribute = array(
+	"igi.cnr.it" => "sAMAccountName"
+);
+
+$wgLDAPGroupAttribute = array(
+	"igi.cnr.it" => "uniqueMember"
+);
+
+$wgLDAPGroupUseFullDN = array(
+	"igi.cnr.it" => true
+);
+
+$wgLDAPLowerCaseUsername = array(
+	"igi.cnr.it" => true
+);
+
+$wgLDAPGroupsUseMemberOf = array(
+	"igi.cnr.it" => false
+);
+
+
+$wgLDAPDisableAutoCreate = array(
+	"igi.cnr.it" => false
+);
+
+
+//
+// LDAP 2 [ RFX ]
+// 
+
+
+$wgLDAPDebug = 3;
+$wgLDAPExceptionDetails = true;
+
+// wfLoadExtension( 'LDAPAuthentication2', "$IP/rfx/extensions/LDAPAuthentication2/extension.json" );
+
+// Load LDAP Config from JSON
+wfDebug('[RFX] Loading LDAP !!');
+$ldapJsonFile = "$IP/ldap.json";
+$ldapConfig = false;
+if (is_file($ldapJsonFile) && is_dir("$IP/rfx/extensions/LDAPProvider")) {
+	$testJson = @json_decode(file_get_contents($ldapJsonFile),true);
+	if (is_array($testJson)) {
+		$ldapConfig = true;
+		$wgLDAPDebug = 10;
+		$wgDebugLogGroups["ldap"] = "{$rfxLOGDIR}/ldap.log";
+		wfDebug('[RFX] LDAP config true !!');
+	} else {
+		error_log("Found invalid JSON in file: $IP/ldap.json");
+		wfDebug('[RFX] LDAP config false !!');
+	}
+}
+
+// Activate Extension
+if ( $ldapConfig ) {
+	
+	$wgExtensionDirectory = "$IP/rfx/extensions";  
+	wfLoadExtension( 'PluggableAuth' );
+	wfLoadExtension( 'LDAPProvider' );
+	wfLoadExtension( 'LDAPAuthentication2' );
+	wfLoadExtension( 'LDAPAuthorization' );
+	wfLoadExtension( 'LDAPUserInfo' );
+	wfLoadExtension( 'LDAPGroups' );
+	$wgExtensionDirectory = "$IP/extensions";
+	
+	$LDAPProviderDomainConfigs = $ldapJsonFile;
+	$wgPluggableAuth_ButtonLabel = "Log In";
+	
+	if ($wikiRequestSafe) { $LDAPAuthentication2AllowLocalLogin = true; }
+}
+wfDebug('[RFX] Finished Loading LDAP !!');
+
+
+//
+// Semantic wiki
+//
+// enableSemantics( 'portal.igi.cnr.it' );
+
+wfLoadExtension( 'PageForms', "$IP/rfx/extensions/PageForms/extension.json" );
+$smwgCacheType = CACHE_NONE;
+$smwgAutoRefreshOnPurge = true;
+$wgEnableParserCache = false;
+$wgCachePages = false;
+
+
+wfLoadExtension( 'SimpleMathJax', "$IP/rfx/extensions/SimpleMathJax-master/extension.json"  );
+$wgSmjScale = 2.0;
+
+
+# require_once "$IP/extensions/ExternalData/ExternalData.php";
+wfLoadExtension( 'ExternalData', "$IP/rfx/extensions/ExternalData/extension.json" );
+
+# wfLoadExtension( 'AJAXPoll', "$IP/rfx/extensions/AJAXPoll/extension.json" );
+
+#require_once "$IP/extensions/NoTitle/NoTitle.php";
+wfLoadExtension ('NoTitle', "$IP/rfx/extensions/NoTitle/extension.json" );
+$wgRestrictDisplayTitle = false;
+
+// Cite extension
+// wfLoadExtension( 'Cite' );
+
+// wfLoadExtension( 'PdfHandler' );
+
+# Enable subpages in the main namespace
+$wgNamespacesWithSubpages[NS_MAIN] = true;
+
+# Enable subpages in the template namespace
+$wgNamespacesWithSubpages[NS_TEMPLATE] = true;
+
+
+
+
+
+
+
+
+
 

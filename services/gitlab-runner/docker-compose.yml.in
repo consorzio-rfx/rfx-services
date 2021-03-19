@@ -1,0 +1,16 @@
+version: '3.5'
+services:
+  gitlab-runner:
+    image: '$(DOCKER_IMAGE)'
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    volumes:
+      - ${STORE_DIR}/config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+
+#     networks:
+#       - gitlab
+
+# networks:
+#   gitlab:

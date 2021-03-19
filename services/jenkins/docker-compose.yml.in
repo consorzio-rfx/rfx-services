@@ -1,15 +1,20 @@
 version: '3'
 services:
-    jenkins:
-        image: '$(DOCKER_IMAGE)'
-        deploy:
-          replicas: 1
-        volumes:
-          - jenkins_home:/var/jenkins_home
-        ports:
-            - 8080
-            - 50000
 
-volumes:
-  jenkins_home:
+  jenkins:
+    image: '$(DOCKER_IMAGE)'
+    environment:
+      TZ: Europe/Rome
+    ports:
+      - 8080:8080
+      - 50000:50000
+    tty: true
+    volumes:
+      - ${STORE_DIR}/jenkins-data:/var/jenkins_home
+      # - ${STORE_DIR}/jenkins-init:/var/jenkins_home/init.groovy.d
+      - /var/run/docker.sock:/var/run/docker.sock
 
+  # jenkins_agent:
+  #   image: jenkins/inbound-agent
+  #   init: true
+  #   command: -url http://jenkins-server:port <secret> <agent name>

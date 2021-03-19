@@ -1,0 +1,64 @@
+version: '3'
+services:
+
+  ghost:
+    image: ghost:latest
+    # restart: always
+    depends_on:
+      - db
+    ports:
+      - 2368:2368
+    environment:
+      url: $(GHOST_URL)
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: root
+      database__connection__password: your_database_root_password
+      database__connection__database: ghost
+    volumes:
+      - ${STORE_DIR}/ghost_content:/var/lib/ghost/content
+    labels:
+      - "reroute.ip=$(REROUTE_IP)"
+      - "reroute.ports=2368:2368"
+
+  db:
+    image: mysql:5.7
+    # restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: your_database_root_password
+    volumes:
+      - ${STORE_DIR}/ghost_mysql:/var/lib/mysql
+
+  nginx:
+    image: nginx:latest
+    depends_on:
+      - ghost
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      - "reroute.ip=$(REROUTE_IP)"
+      - "reroute.ports=80:80 443:443"
+    volumes:
+      - ${SERVICE_DIR}/nginx/etc:/etc/nginx
+      - ${STORE_DIR}/nginx/html:/usr/share/nginx/html
+      - ${SERVICE_DIR}/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - "${SSLCERT_FILE_CRT}:/etc/nginx/ca.crt"
+      - "${SSLCERT_FILE_KEY}:/etc/nginx/ca.key"
+
+
+  # certbot:
+  #   image: certbot-nginx:latest
+  #   volumes:
+  #     - ${SERVICE_DIR}/nginx/etc:/etc/nginx
+  #     - ${STORE_DIR}/nginx/html:/usr/share/nginx/html
+
+
+
+# volumes:
+#   nginx:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       device: ${STORE_DIR}/data
+#       o: bind

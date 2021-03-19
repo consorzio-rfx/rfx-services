@@ -1,5 +1,4 @@
-NODOCKERBUILD = %
-
+include $(top_srcdir)/conf/kscripts/docker.mk
 
 mkfile_path = $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir = $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
@@ -94,39 +93,42 @@ logs:
 	@ $(info loking service logs) \
 	  docker service logs $(SERVICE_NAME) -f
 
-shell: ##@docker_services enter instance shell
-shell:
+service-shell: ##@docker_services enter instance shell
+service-shell:
 	@ $(info login into $(SERVICE_NAME).$(or $(ID),1)) \
 	  _id=`docker service ps $(SERVICE_NAME) -q`; \
 	  docker exec -ti $(SERVICE_NAME).$(or $(ID),1).$${_id} $(SHELL)
+
+NODOCKERBUILD += swarm-init swarm-leave start stop ps logs shell compose-up service-shell
 
 compose-up:   ##@@docker_composer local command up
 compose-down: ##@@docker_composer local command down
 compose-logs: ##@@docker_composer local command logs
 compose-up:
-	@ docker-compose -f ${COMPOSER_FILE} up -d $(SERVICE)
+	@ docker-compose -f ${COMPOSER_FILE} up 
 compose-logs:
 	@ docker-compose -f ${COMPOSER_FILE} logs -f $(SERVICE)
 compose-down:
 	@ docker-compose -f ${COMPOSER_FILE} down
 
-portainer-init: ##@docker_services poirtainer init (browse localhost:9000 then)
-portainer-init:
-	@ docker volume create portainer_data; \
-      docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
+# portainer-init: ##@docker_services poirtainer init (browse localhost:9000 then)
+# portainer-init:
+# 	@ docker volume create portainer_data; \
+#       docker run -d -p 9000:9000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
 
 
-docker-registry-init: ##@docker_services registry init (provide an image registry at localhost:5000)
-docker-registry-init:
-	@ docker service create --name registry --publish 5000:5000 registry:2
+# docker-registry-init: ##@docker_services registry init (provide an image registry at localhost:5000)
+# docker-registry-init:
+# 	@ docker service create --name registry --publish 5000:5000 registry:2
 
 
 reroute: $(abs_top_srcdir)/services/service_reroute.sh
-	@ sudo -E $^ -s $(SERVICE_NAME) reroute_ports ||:
+	@ sudo -E $^ --debug -s $(SERVICE_NAME) reroute_ports ||:
 
 reroute-clear: $(abs_top_srcdir)/services/service_reroute.sh
-	@ sudo -E $^ -s $(SERVICE_NAME) clear_ports ||:
+	@ sudo -E $^ --debug -s $(SERVICE_NAME) clear_ports ||:
 
+NODOCKERBUILD += compose-up compose-down compose-logs compose-init docker-registry-init reroute reroute-clear
 
 ##
 ## INSTALL TARGETS
@@ -202,21 +204,20 @@ all-am: Makefile $(DATA) $(COMPOSER_FILE)
 install: clean install-am
 
 
-
-
 define SERVICE_DIR_copy =
 $(word 1,$(subst :, ,$1)):
-	@ mkdir -p $$@; \
-      docker run --name nagios_copy \
-      --rm -t --entrypoint="/bin/sh" \
-      -v $$@:/copy_tmp $(DOCKER_IMAGE) \
-      -c "cp -a $(word 2,$(subst :, ,$1))/* /copy_tmp"
+	@ $$(info creating $$@) \
+	  docker run \
+	  --rm -t --entrypoint="/bin/sh" \
+	  -u root \
+	  -v $$(dir $$@):/copy_tmp $(DOCKER_IMAGE) \
+	  -c "cp -a $(word 2,$(subst :, ,$1))/ /copy_tmp/$$(notdir $$@)"
 endef
 $(foreach dir,$(SERVICE_DIR_COPY),$(eval $(call SERVICE_DIR_copy,$(dir))))
 
 create-dirs: ##@service create directories (todo: add this to defualt action)
-create-dirs: $(foreach dir,$(SERVICE_DIR_COPY),$(firstword $(subst :, ,$(dir))) )
-
+create-dirs: $(foreach dir,$(SERVICE_DIR_COPY),$(word 1,$(subst :, ,$(dir))) )
+	@:;
 
 
 
@@ -231,35 +232,35 @@ create-dirs: $(foreach dir,$(SERVICE_DIR_COPY),$(firstword $(subst :, ,$(dir))) 
 ##    .##.....##.##...##........##....##.....##.##....##..##....##..##..........##...
 ##    .########..##....##.......##....##.....##.##.....##..######...########....##...
 
-export DOCKER_CONTAINER
-export DOCKER_IMAGE
-export DOCKER_URL
-export DOCKER_DOCKERFILE
-export DOCKER_ENTRYPOINT
-export DOCKER_SHARES
-export DOCKER_NETWORKS
-export DOCKER_PORTS
-export DOCKER_SHELL = /bin/sh
-export DOCKER_REGISTRY
+# export DOCKER_CONTAINER
+# export DOCKER_IMAGE
+# export DOCKER_URL
+# export DOCKER_DOCKERFILE
+# export DOCKER_ENTRYPOINT
+# export DOCKER_SHARES
+# export DOCKER_NETWORKS
+# export DOCKER_PORTS
+# export DOCKER_SHELL = /bin/sh
+# export DOCKER_REGISTRY
 
-DSHELL = $(top_srcdir)/conf/dk.sh ${DSHELL_ARGS}
-NO_DOCKER_TARGETS = Makefile $(srcdir)/Makefile.in $(srcdir)/Makefile.am $(top_srcdir)/configure.ac $(ACLOCAL_M4) $(top_srcdir)/configure am--refresh \
-                    $(am__aclocal_m4_deps) $(am__configure_deps) $(top_srcdir)/%.mk \
-					docker-%
-NODOCKERBUILD += ${DOCKER_TARGETS} #this is needed for build with docker
+# DSHELL = $(top_srcdir)/conf/dk.sh ${DSHELL_ARGS}
+# NO_DOCKER_TARGETS = Makefile $(srcdir)/Makefile.in $(srcdir)/Makefile.am $(top_srcdir)/configure.ac $(ACLOCAL_M4) $(top_srcdir)/configure am--refresh \
+#                     $(am__aclocal_m4_deps) $(am__configure_deps) $(top_srcdir)/%.mk \
+# 					docker-%
+# NODOCKERBUILD += ${DOCKER_TARGETS} #this is needed for build with docker
 
-# DSHELL_ARGS = -v
-$(DOCKER_TARGETS): override SHELL = $(DSHELL)
-$(NO_DOCKER_TARGETS): override SHELL = /bin/sh
-$(NO_DOCKER_TARGETS): override HAVE_DOCKER = no
+# # DSHELL_ARGS = -v
+# $(DOCKER_TARGETS): override SHELL = $(DSHELL)
+# $(NO_DOCKER_TARGETS): override SHELL = /bin/sh
+# $(NO_DOCKER_TARGETS): override HAVE_DOCKER = no
 
-docker-clean: ##@@docker_target clean docker container conf in .docker directory
-docker-start: ##@@docker_target start advanced per target docker container
-docker-stop:  ##@@docker_target stop advanced per target docker container
-docker-:      ##@@docker_target advanced per target docker (any command passed to conf/dk.sh)
-docker-%:
-	@ $(info [docker] $*)
-	@ . $(DSHELL) $*
+# docker-clean: ##@@docker_target clean docker container conf in .docker directory
+# docker-start: ##@@docker_target start advanced per target docker container
+# docker-stop:  ##@@docker_target stop advanced per target docker container
+# docker-:      ##@@docker_target advanced per target docker (any command passed to conf/dk.sh)
+# docker-%:
+# 	@ $(info [docker] $*)
+# 	@ . $(DSHELL) $*
 
 
 

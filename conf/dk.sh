@@ -80,6 +80,74 @@ if [ $# -lt 1 ] ; then
 	exit 1
 fi
 
+
+# dk_test_status [cnt_name] [status]
+# status =  created, restarting, running, paused, exited
+dk_test_status() {
+  cnt_id=$(docker ps -a -f name=$1 -q)
+  cnt_st=$(docker ps -a -f name=$1 -f status=$2 -q)
+	[ x"${cnt_id}" = x"${cnt_st}" ] && return 0 || return 1
+}
+
+# dk_get_status [cnt_name] [ans]
+# return readable status of container either in _ans or $2
+dk_get_status() {
+  _ans="unhandled"
+	dk_test_status $1 created && _ans="created"
+	dk_test_status $1 running && _ans="running"
+	dk_test_status $1 restarting && _ans="restarting"
+	dk_test_status $1 paused && _ans="paused"
+	dk_test_status $1 exited && _ans="exited"
+  [ -n "$2" ] && eval $2="$_ans"
+}
+
+# dk_get_image_id [image] [ans]
+# return image id from name either in _ans or $2
+dk_get_image_id() {
+  _ans=$(docker images -a | awk -v _img=$1 '{if ($1 ":" $2 == _img) {print $3}}' )
+ [ -n "$2" ] && eval $2="$_ans"
+}
+
+# dk_get_container_id [cnt_name] [ans]
+# return container id from name either in _ans or $2
+dk_get_container_id() {
+  unset _ans
+  [ -n "$1" ] && _ans=$(docker ps -a -f name=$1 -q)
+  [ -n "$_ans" ] || _ans=$(docker ps -a -f id=$1 -q)
+  [ -n "$2" ] && eval $2="$_ans"
+}
+
+# # dk_get_container_id [cnt_name] [ans]
+# # return container id from name either in _ans or $2
+# dk_get_container_name() {
+#   unset _ans
+#   dk_get_container_id $1 _ans
+#   [ -n "$1" ] && _ans=$(docker ps -a -f name=$1 -q)
+#   [ -n "$_ans" ] || _ans=$(docker ps -a -f id=$1 -q)
+#   [ -n "$2" ] && eval $2="$_ans"
+# }
+
+# dk_get_container_image [cnt_name] [ans]
+# return container image
+dk_get_container_image() {
+  _ans=$(docker inspect --format='{{.Config.Image}}' $1)
+	[ -n "$2" ] && eval $2="$_ans"
+}
+
+# dk_image_exist [image]
+# test if image exists
+dk_image_exist() {
+  _ans=$(docker images -a -q $1 )
+  [ -n "$_ans" ] && return 0 || return 1
+}
+
+
+# if DOCKER_CONTAINER_ID is set the docker container name is obtained from it
+if [ ${DOCKER_CONTAINER_ID} ]; then 
+ echo DOCKER CONTAINER ID SET !!
+ DOCKER_CONTAINER=$(docker inspect --format="{{.Name}}" ${DOCKER_CONTAINER_ID})
+fi
+
 # if no DOCKER_CONTAINER revert to normal shell 
 # (this is needed for shell command within make for example,
 #  but those command are not executed in container though )
@@ -102,7 +170,13 @@ DOCKER_SCRIPTPATH=${DOCKER_SCRIPTPATH:-.docker-build}
 
 # append md5 to docker container
 DOCKER_CONTAINER_PREFIX=${DOCKER_CONTAINER}
-DOCKER_CONTAINER=$(get_md5_container ${DOCKER_CONTAINER}; echo $_ans)
+if [ ${DOCKER_CONTAINER_ID} ]; then
+	DOCKER_CONTAINER=$()
+	dk_get_container_id ${DOCKER_CONTAINER} ${DOCKER_CONTAINER_ID}
+else
+  DOCKER_CONTAINER=$(get_md5_container ${DOCKER_CONTAINER}; echo $_ans)
+fi
+
 DOCKER_ENTRYPOINT=${DOCKER_ENTRYPOINT:-/bin/sh}
 DOCKER_SHELL=${DOCKER_SHELL:-/bin/sh}
 
@@ -157,55 +231,7 @@ read_config() {
 
 
 
-# dk_test_status [cnt_name] [status]
-# status =  created, restarting, running, paused, exited
-dk_test_status() {
-  cnt_id=$(docker ps -a -f name=$1 -q)
-  cnt_st=$(docker ps -a -f name=$1 -f status=$2 -q)
-	[ x"${cnt_id}" = x"${cnt_st}" ] && return 0 || return 1
-}
 
-# dk_get_status [cnt_name] [ans]
-# return readable status of container either in _ans or $2
-dk_get_status() {
-  _ans="unhandled"
-	$(dk_test_status $1 created) && _ans="created"
-	$(dk_test_status $1 running) && _ans="running"
-	$(dk_test_status $1 restarting) && _ans="restarting"
-	$(dk_test_status $1 paused) && _ans="paused"
-	$(dk_test_status $1 exited) && _ans="exited"
-  [ -n "$2" ] && eval $2="$_ans"
-}
-
-# dk_get_image_id [image] [ans]
-# return image id from name either in _ans or $2
-dk_get_image_id() {
-  _ans=$(docker images -a | awk -v _img=$1 '{if ($1 ":" $2 == _img) {print $3}}' )
- [ -n "$2" ] && eval $2="$_ans"
-}
-
-# dk_get_container_id [cnt_name] [ans]
-# return container id from name either in _ans or $2
-dk_get_container_id() {
-  unset _ans
-  [ -n "$1" ] && _ans=$(docker ps -a -f name=$1 -q)
-  [ -n "$_ans" ] || _ans=$(docker ps -a -f id=$1 -q)
-	[ -n "$2" ] && eval $2="$_ans"
-}
-
-# dk_get_container_image [cnt_name] [ans]
-# return container image
-dk_get_container_image() {
-  _ans=$(docker inspect --format='{{.Config.Image}}' $1)
-	[ -n "$2" ] && eval $2="$_ans"
-}
-
-# dk_image_exist [image]
-# test if image exists
-dk_image_exist() {
-  _ans=$(docker images -a -q $1 )
-  [ -n "$_ans" ] && return 0 || return 1
-}
 
 # build image from URL (either local directory or web page content)
 # the image name can be a local name or any overlapping name that will 
