@@ -9,5 +9,12 @@ services:
       - 8080:8080
       - 50000:50000
     tty: true
-    # volumes:
-    #   - ${STORE_DIR}/jenkins-data:/var/jenkins_home
+    volumes:
+      - ${STORE_DIR}/jenkins-data:/var/jenkins_home
+      # - ${STORE_DIR}/jenkins-init:/var/jenkins_home/init.groovy.d
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # jenkins_agent:
+  #   image: jenkins/inbound-agent
+  #   init: true
+  #   command: -url http://jenkins-server:port <secret> <agent name>
